@@ -4,7 +4,7 @@
 ## Project planing:
 * Works:
 * Completion time:
-* Envỉonment:
+* Environment:
 
 ## Security requirement:
 * Authentication
