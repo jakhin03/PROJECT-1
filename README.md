@@ -6,4 +6,14 @@
 * Completion time:
 * Envỉonment:
 
-##
+## Security requirement:
+* Authentication
+* Monitoring
+* Encryption
+* Authorization
+
+## Potential risks:
+
+## Implement security solutions:
+
+## Test and evaluate effectiveness:
