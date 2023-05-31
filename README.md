@@ -7,13 +7,14 @@
 	* Accessing integrate Slack User and Slack Channel to AirTable
 	* Document: [slack API](https://api.slack.com/methods)
 
-## Project planing: [details](./Figure/Project%20plan%20Topic%207%20-%20Group%2012.pdf)
+## Project planing:
 * Learn about the Slack, AirTable and its API
 * Design program
 * Implement Slack and AirTable integration
 * Test and debug
 * Documenting project
 * Deploy and showcase
+[details](./Figure/Project%20plan%20Topic%207%20-%20Group%2012.pdf)
 
 ## Security requirement:
 * Authentication
