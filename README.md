@@ -5,7 +5,7 @@
 	* Using JAVA language
 	* Exploring Slack, AirTable and its API
 	* Accessing integrate Slack User and Slack Channel to AirTable
-	* Document: [source](https://api.slack.com/methods)
+	* Document: [slack API](https://api.slack.com/methods)
 
 
 ## Project planing:
