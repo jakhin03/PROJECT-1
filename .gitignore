@@ -1,9 +1,9 @@
- .metadata/
- .settings/
- target/
- test/
- .classpath
- .project
- .pom.xml
- .settings
 *.tmp
+App/.metadata/
+App/Project1/.classpath
+App/Project1/.project
+App/Project1/.settings
+App/Project1/bin/
+App/Project1/pom.xml
+App/Project1/target/
+App/Project1/test/
