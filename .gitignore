@@ -1,2 +1,9 @@
-
+ /.metadata/
+ /.settings/
+ /target/
+ /test/
+ .classpath
+ .project
+ .pom.xml
+ .settings
 *.tmp
