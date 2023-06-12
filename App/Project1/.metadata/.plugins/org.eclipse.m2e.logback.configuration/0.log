@@ -394,3 +394,20 @@
 2023-06-08 13:46:23,222 [Worker-50: Launching SlackAirtableSync] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\main\resources
 2023-06-08 13:46:23,223 [Worker-50: Launching SlackAirtableSync] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
 2023-06-08 13:46:23,224 [Worker-50: Launching SlackAirtableSync] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\test\resources
+2023-06-12 14:29:05,056 [Worker-5: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2023-06-12 14:44:38,905 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 14:44:38,908 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\main\resources
+2023-06-12 14:44:38,910 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 14:44:38,910 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\test\resources
+2023-06-12 14:45:07,781 [Worker-29: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 14:45:07,781 [Worker-29: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\main\resources
+2023-06-12 14:45:07,782 [Worker-29: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 14:45:07,783 [Worker-29: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\test\resources
+2023-06-12 15:25:06,095 [Worker-43: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 15:25:06,095 [Worker-43: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\main\resources
+2023-06-12 15:25:06,096 [Worker-43: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 15:25:06,096 [Worker-43: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\test\resources
+2023-06-12 15:41:59,479 [Worker-49: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 15:41:59,480 [Worker-49: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\main\resources
+2023-06-12 15:41:59,483 [Worker-49: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2023-06-12 15:41:59,483 [Worker-49: Launching SlackDataFetching] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory I:\HUST\Project1\slackairtablesyncing\src\test\resources
