@@ -1,7 +1,7 @@
- /.metadata/
- /.settings/
- /target/
- /test/
+ .metadata/
+ .settings/
+ target/
+ test/
  .classpath
  .project
  .pom.xml
