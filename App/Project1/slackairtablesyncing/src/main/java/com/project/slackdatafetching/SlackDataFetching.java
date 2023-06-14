@@ -3,71 +3,49 @@ package com.project.slackdatafetching;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
-import com.slack.api.methods.request.channels.ChannelsListRequest;
+import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.request.users.UsersInfoRequest;
 import com.slack.api.methods.request.users.UsersListRequest;
-import com.slack.api.methods.response.channels.ChannelsListResponse;
+import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.response.users.UsersInfoResponse;
 import com.slack.api.methods.response.users.UsersListResponse;
-import com.slack.api.model.Channel;
+import com.slack.api.model.Conversation;
 import com.slack.api.model.User;
 
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class SlackDataFetching {
     // Slack API credentials
-    private static final String SLACK_TOKEN = "YOUR_SLACK_TOKEN";
+    private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
 
     public static void main(String[] args) {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
 
         // Fetch channels
-        List<Channel> channels = fetchChannels(methods);
+        List<Conversation> channels = fetchChannels(methods);
         if (channels != null) {
-            System.out.println("Channels:");
-            for (Channel channel : channels) {
-                System.out.println("Channel Name: " + channel.getName());
-                System.out.println("Channel ID: " + channel.getId());
-                System.out.println("Topic: " + channel.getTopic().getValue());
-                System.out.println("Description: " + channel.getPurpose().getValue());
-                System.out.println("Creator ID: " + channel.getCreator());
-                System.out.println("Channel Create Date: " + formatDate(channel.getCreated()));
-                System.out.println("Privacy: " + (channel.isPrivateChannel() ? "Private" : "Public"));
-                System.out.println("Members: " + channel.getMembers().size());
-                System.out.println("Status: " + (channel.isArchived() ? "Archived" : "Active"));
-                System.out.println("---------------------");
-            }
+        	writeChannelsToCSV(channels, "I:/HUST/HUST-2022-2/Project 1/SlackAirtableSync/channels.csv");
         }
-
+        
         // Fetch users
         List<User> users = fetchUsers(methods);
         if (users != null) {
-            System.out.println("Users:");
-            for (User user : users) {
-                System.out.println("User Name: " + user.getName());
-                System.out.println("User ID: " + user.getId());
-                System.out.println("Email: " + user.getProfile().getEmail());
-                System.out.println("Display Name: " + user.getProfile().getDisplayName());
-                System.out.println("Full Name: " + user.getProfile().getRealName());
-                System.out.println("Status: " + user.getProfile().getStatusText());
-                System.out.println("Role: " + (user.isOwner() ? "Owner" : "Member"));
-                System.out.println("User Created Date: " + fetchUserCreatedDate(methods, user.getId()));
-                System.out.println("Status Change Date: " + formatDate(user.getProfile().getStatusExpiration()));
-                System.out.println("---------------------");
-            }
+        	writeUsersToCSV(users, "I:/HUST/HUST-2022-2/Project 1/SlackAirtableSync/users.csv");
         }
     }
 
-    private static List<Channel> fetchChannels(MethodsClient methods) {
+    private static List<Conversation> fetchChannels(MethodsClient methods) {
         try {
-            ChannelsListRequest request = ChannelsListRequest.builder()
+            ConversationsListRequest request = ConversationsListRequest.builder()
                     .token(SLACK_TOKEN)
                     .build();
-            ChannelsListResponse response = methods.channelsList(request);
+            ConversationsListResponse response = methods.conversationsList(request);
             if (response.isOk()) {
                 return response.getChannels();
             } else {
@@ -96,28 +74,71 @@ public class SlackDataFetching {
         return null;
     }
 
-    private static String fetchUserCreatedDate(MethodsClient methods, String userId) {
-        try {
-            UsersInfoRequest request = UsersInfoRequest.builder()
-                    .token(SLACK_TOKEN)
-                    .user(userId)
-                    .build();
-            UsersInfoResponse response = methods.usersInfo(request);
-            if (response.isOk()) {
-                User user = response.getUser();
-                return formatDate(user.getUpdated());
-            } else {
-                System.out.println("Failed to fetch user info: " + response.getError());
+    private static void writeChannelsToCSV(List<Conversation> channels, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+        	// Write CSVV header
+            writer.write("Channel Name,Channel ID,Topic,Description,Creator ID,Channel Create Date,Privacy,Members,Status");
+            writer.newLine();
+            
+            // Write channel dât
+            for (Conversation channel : channels) {
+                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%d,%s",
+                        channel.getName(),
+                        channel.getId(),
+                        getFieldValue(channel.getTopic().getValue()),
+                        getFieldValue(channel.getPurpose().getValue()),
+                        getFieldValue(channel.getCreator()),
+                        formatDate(channel.getCreated()),
+                        getFieldValue(channel.isPrivate() ? "Private" : "Public"),
+                        channel.getNumOfMembers(),
+                        channel.isArchived() ? "Archived" : "Active"));
+                writer.newLine();
             }
-        } catch (IOException | SlackApiException e) {
-            System.out.println("Error occurred while fetching user info: " + e.getMessage());
+
+            System.out.println("Channels data written to " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error occurred while writing channels data to " + fileName + ": " + e.getMessage());
+        }
+    }
+    
+    private static void writeUsersToCSV(List<User> users, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+        	// Write CSV header
+            writer.write("User Name,User ID,Email,Display Name,Full Name,Status,Role,User Created Date,Status Change Date");
+            writer.newLine();
+            
+            // Write user data
+            for (User user : users) {
+                writer.write(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                		getFieldValue(user.getName()),
+                        user.getId(),
+                        user.getProfile().getEmail(),
+                        user.getProfile().getDisplayName(),
+                        user.getProfile().getRealName(),
+                        user.getProfile().getStatusText(),
+                        user.isOwner() ? "Owner" : "Member",
+                        formatDate(user.getUpdated()),
+                        formatDate(user.getProfile().getStatusExpiration())));
+                writer.newLine();
+            }
+
+            System.out.println("Users data written to " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error occurred while writing users data to " + fileName + ": " + e.getMessage());
+        }
+    }
+    
+    private static String formatDate(Number timestamp) {
+        if (timestamp != null && timestamp.longValue() > 0) {
+            long timestampValue = timestamp.longValue();
+            Date date = new Date(timestampValue * 1000);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            return sdf.format(date);
         }
         return "N/A";
     }
-
-    private static String formatDate(long timestamp) {
-        Date date = new Date(timestamp * 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
-        return sdf.format(date);
+    
+    private static <T> String getFieldValue(T value) {
+        return value != null ? value.toString().replaceAll(",", ";") : "N/A";
     }
 }
