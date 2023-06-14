@@ -1,9 +1,9 @@
 *.tmp
 App/.metadata/
-App/Project1/.classpath
-App/Project1/.project
-App/Project1/.settings
-App/Project1/bin/
-App/Project1/pom.xml
-App/Project1/target/
-App/Project1/test/
+App/Project1/slackairtablesyncing/.classpath
+App/Project1/slackairtablesyncing/.project
+App/Project1/slackairtablesyncing/.settings
+App/Project1/slackairtablesyncing/bin/
+App/Project1/slackairtablesyncing/pom.xml
+App/Project1/slackairtablesyncing/target/
+App/Project1/slackairtablesyncing/test/
