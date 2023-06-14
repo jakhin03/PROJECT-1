@@ -1,8 +1,37 @@
-package com.project.airtableAPI;
+package main.java.com.project.airtableAPI;
 
 public class Table {
-	public String yourToken;
-	public String baseId;
-	public String tableIdOrName;
-	public String recordId;
+	public String listRecords(){
+		String records = null;
+		return records;
+	}
+
+	public String getRecord(){
+		String records = null;
+		return records;
+	}
+
+	public void updateMultipleRecords(){
+
+	}
+
+	public void updateRecord(){
+
+	}
+
+	public void createRecord(){
+
+	}
+
+	public void deleteMultipleRecords(){
+
+	}
+
+	public void deleteRecord(){
+
+	}
+
+	public void syncCSVData(){
+
+	}
 }
