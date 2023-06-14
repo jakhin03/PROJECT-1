@@ -1,4 +1,4 @@
-package main.java.com.project.airtableAPI;
+package com.project.airtableAPI;
 
 public class ChannelRecord {
 	private String createdTime;

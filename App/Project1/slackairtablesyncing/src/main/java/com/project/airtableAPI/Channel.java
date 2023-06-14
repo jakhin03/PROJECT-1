@@ -1,4 +1,4 @@
-package main.java.com.project.airtableAPI;
+package com.project.airtableAPI;
 import java.util.*;
 
 public class Channel {
