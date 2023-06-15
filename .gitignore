@@ -1,4 +1,5 @@
 *.tmp
+*.class
 App/.metadata/
 App/Project1/slackairtablesyncing/.classpath
 App/Project1/slackairtablesyncing/.project

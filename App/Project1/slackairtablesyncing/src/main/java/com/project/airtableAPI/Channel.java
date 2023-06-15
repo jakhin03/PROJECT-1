@@ -1,4 +1,5 @@
 package com.project.airtableAPI;
+
 import java.util.*;
 
 public class Channel {
@@ -12,7 +13,7 @@ public class Channel {
 	private Integer numberOfMember;
 	private Boolean isActive;
 	private ArrayList<User> users;
-	
+
 	public Channel(String channelId, String name, String topic, String description, String creatorId,
 			String channelCreateDate, Boolean isPublic, Integer numberOfMember, Boolean isActive,
 			ArrayList<User> users) {
@@ -96,19 +97,18 @@ public class Channel {
 	public String getChannelCreateDate() {
 		return channelCreateDate;
 	}
-	
-    public void addUser(User user) {
-        this.users.add(user);
-    }
-    
-    public void removeUser(User user) {
-    	this.users.remove(user);
-    }
-    
+
+	public void addUser(User user) {
+		this.users.add(user);
+	}
+
+	public void removeUser(User user) {
+		this.users.remove(user);
+	}
+
 	@Override
 	public String toString() {
 		return "Channel [name=" + name + ", topic=" + topic + "]";
 	}
-
 
 }
