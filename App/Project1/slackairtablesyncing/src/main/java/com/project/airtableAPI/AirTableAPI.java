@@ -1,4 +1,7 @@
+package com.project.airtableAPI;
+
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,12 @@ public class AirTableAPI {
 	private String apiKey;
 	private String baseId;
 	
-	public AirtableHttpClient(String apiKey, String baseId) {
+	public static void main(String[] args) {
+
+	}
+	
+	
+	public AirTableAPI(String apiKey, String baseId) {
 		this.apiKey = apiKey;
 		this.baseId = baseId;
 	}
@@ -106,7 +114,7 @@ public class AirTableAPI {
 		String offset = null;
 		do {
 			if (offset != null) {
-				httpGet.setURI(url + "?offset=" + offset);
+				httpGet.setURI(URI.create(url + "?offset=" + offset));
 			}
 			HttpResponse response = httpClient.execute(httpGet);
 			HttpEntity responseEntity = response.getEntity();

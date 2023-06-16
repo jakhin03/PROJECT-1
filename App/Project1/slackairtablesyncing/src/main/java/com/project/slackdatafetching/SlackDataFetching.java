@@ -17,26 +17,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+
 public class SlackDataFetching {
 	// Slack API credentials
 	private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
-
-//	public static void main(String[] args) {
-//		Slack slack = Slack.getInstance();
-//		MethodsClient methods = slack.methods();
-//
-//		// Fetch channels
-//		List<Conversation> channels = fetchChannels(methods);
-//		if (channels != null) {
-//			writeChannelsToCSV(channels, "I:/HUST/HUST-2022-2/Project 1/SlackAirtableSync/channels.csv");
-//		}
-//
-//		// Fetch users
-//		List<User> users = fetchUsers(methods);
-//		if (users != null) {
-//			writeUsersToCSV(users, "I:/HUST/HUST-2022-2/Project 1/SlackAirtableSync/users.csv");
-//		}
-//	}
 
 	private static List<Conversation> fetchChannels(MethodsClient methods) {
 		try {
