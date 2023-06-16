@@ -18,28 +18,26 @@
 * Setup environments:
 	* Dependencies:
 ```
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.slack.api</groupId>
-			<artifactId>slack-api-client</artifactId>
-			<version>1.29.2</version>
-		</dependency>
-		<dependency>
-			<groupId>dev.fuxing</groupId>
-			<artifactId>airtable-api</artifactId>
-			<version>0.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>fluent-hc</artifactId>
-			<version>4.5.5</version>
-		</dependency>
-	</dependencies>
+<dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.11</version>
+	<scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>com.slack.api</groupId>
+	<artifactId>slack-api-client</artifactId>
+	<version>1.29.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.httpcomponents</groupId>
+	<artifactId>fluent-hc</artifactId>
+	<version>4.5.14</version>
+</dependency>
+<dependency>
+	<groupId>org.json</groupId>
+	<artifactId>json</artifactId>
+	<version>20230227</version>
+</dependency>
 ```
 
