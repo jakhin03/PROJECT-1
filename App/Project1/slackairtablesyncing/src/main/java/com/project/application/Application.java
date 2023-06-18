@@ -28,15 +28,25 @@ public class Application {
 		String baseId = "appNRtbTlWVuJ1lRQ";
 		String tableNameOrId = "tbl9zdg4EZZvfFAtz";
 		String recordId = "recAZ9l3YNMwN3mUJ";
-		String jsonData = "{\"Status\":\"abccb\",\"Notes\":\"d\",\"Name\":\"asdfsdf\"}";
+		String jsonData = "{Status:abccb,Notes:d,Name:asdfsdf}";
 		AirTableAPI airtableAPI = new AirTableAPI(apiKey,baseId);
 		
 		JSONObject result2 = new JSONObject(jsonData);
 		System.out.println(result2.toString());
 		
-		airtableAPI.updateRecord(tableNameOrId, recordId, result2);
+		airtableAPI.deleteRecord(tableNameOrId, recordId);
 		
 		JSONArray result3 = airtableAPI.listRecords(tableNameOrId);
 		System.out.println(result3.toString());
 	}
+	
+	public static void createChannel() {
+		
+	}
+	
+	public static void addUser() {
+		
+	}
+	
+	
 }
