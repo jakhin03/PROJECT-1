@@ -31,10 +31,12 @@ public class Application {
 		String jsonData = "{Status:abccb,Notes:d,Name:asdfsdf}";
 		AirTableAPI airtableAPI = new AirTableAPI(apiKey,baseId);
 		
-		JSONObject result2 = new JSONObject(jsonData);
-		System.out.println(result2.toString());
-		
-		airtableAPI.deleteRecord(tableNameOrId, recordId);
+		JSONObject fields = new JSONObject();
+        fields.put("Status", "John Doe");
+        fields.put("Notes", "john.doe@example.com");
+        fields.put("Name", "555-1234");
+        System.out.println(fields.toString());
+        airtableAPI.createRecord(tableNameOrId, fields);
 		
 		JSONArray result3 = airtableAPI.listRecords(tableNameOrId);
 		System.out.println(result3.toString());
