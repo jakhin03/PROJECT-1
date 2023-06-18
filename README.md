@@ -7,21 +7,37 @@
 	* Accessing integrate Slack User and Slack Channel to AirTable
 	* Document: [slack API](https://api.slack.com/methods)
 
-## Project planing: [details](./Figure/Project%20plan%20Topic%207%20-%20Group%2012.pdf)
-* Learn about the Slack, AirTable and its API
-	* Slack API: Using the WebAPI alongside EventAPI
-		* WebAPI is used if you want to post messages into slack or modify things in the workspace. In order to use it in the workspace, authenticating it with an OAuth token is needed. Setting slack.token as environment variable
-	* Enable events webhook in admin panel:
-	* Installing @slack/web-api along @google-cloud/pubsub 
-* Design program:
-* Implement Slack and AirTable integration
-* Test and debug
-* Documenting project
-* Deploy and showcase
 
-## Modeling:
+## Project planing: [details](./Figure/Project%20plan%20Topic%207%20-%20Group%2012.pdf)
+* Design program:
+	* Flow chart: (Flow chart)[./Figure/flow_chart.png)
+	* Use case: (Use case diagram)[./Figure/use_case.png)
+	* Modeling: (Entity - Relationship Model)[./Figure/model.png)
 
 ## Usage:
 * Setup environments:
+	* Dependencies:
+```
+<dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.11</version>
+	<scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>com.slack.api</groupId>
+	<artifactId>slack-api-client</artifactId>
+	<version>1.29.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.httpcomponents</groupId>
+	<artifactId>fluent-hc</artifactId>
+	<version>4.5.14</version>
+</dependency>
+<dependency>
+	<groupId>org.json</groupId>
+	<artifactId>json</artifactId>
+	<version>20230227</version>
+</dependency>
+```
 
-## Test and evaluate effectiveness:
