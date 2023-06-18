@@ -21,6 +21,7 @@ import java.util.List;
 public class SlackDataFetching {
 	// Slack API credentials
 	private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
+	
 
 	private static List<Conversation> fetchChannels(MethodsClient methods) {
 		try {

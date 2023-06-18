@@ -24,11 +24,6 @@ public class AirTableAPI {
 	private String apiKey;
 	private String baseId;
 	
-	public static void main(String[] args) {
-
-	}
-	
-	
 	public AirTableAPI(String apiKey, String baseId) {
 		this.apiKey = apiKey;
 		this.baseId = baseId;
