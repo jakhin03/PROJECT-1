@@ -1,4 +1,4 @@
-package com.project.application;
+package com.project.main;
 
 import java.io.IOException;
 
@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import com.project.airtableAPI.AirTableAPI;
 
-public class Application {
+public class Main {
 	public static void main(String[] args) throws IOException {
 //		Slack slack = Slack.getInstance();
 //		MethodsClient methods = slack.methods();
