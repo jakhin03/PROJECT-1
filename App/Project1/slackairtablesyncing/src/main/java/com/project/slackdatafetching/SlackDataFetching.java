@@ -22,18 +22,21 @@ public class SlackDataFetching {
     // Slack API credentials
     private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
 
-    public static void main(String[] args) {
+    public static void PrintChannels() {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
 
-        // Fetch channels
         List<Conversation> channels = fetchChannels(methods);
         if (channels != null) {
             String channelsJson = convertToJson(extractChannelData(channels));
             System.out.println("Channels data:\n" + channelsJson);
         }
-
-        // Fetch users
+    }
+    
+    public static void printUSers() {
+    	Slack slack = Slack.getInstance();
+        MethodsClient methods = slack.methods();
+        
         List<User> users = fetchUsers(methods);
         if (users != null) {
             String usersJson = convertToJson(extractUserData(users));
