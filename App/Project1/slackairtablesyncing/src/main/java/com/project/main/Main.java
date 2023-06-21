@@ -25,7 +25,7 @@ public class Main {
 		int buff = 0;
 
 		System.out.println(
-				"Slack management program\nEnter your choice:\n[1] Browse Slack's channels\n[2] Browse Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
+				"Slack management program\nEnter your choice:\n[1] Show Slack's channels\n[2] Show Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
 		int option = sc.nextInt();
 		while (option != 0) {
 			buff++;
