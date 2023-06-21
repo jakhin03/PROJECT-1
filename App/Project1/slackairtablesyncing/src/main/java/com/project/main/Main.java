@@ -23,7 +23,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		Scanner sc = new Scanner(System.in);
 		int buff = 0;
-
+		
 		System.out.println(
 				"Slack management program\nEnter your choice:\n[1] Show Slack's channels\n[2] Show Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
 		int option = sc.nextInt();
@@ -60,73 +60,11 @@ public class Main {
 	}
 
 	public static void showUsers() throws IOException {
-		String apiKey = "patPgcLpaEVhtwBoz.b7e85982f76bec4edeebac2ad85286eb8652f660f8942123e15ae9aa2b0773e4";
-		String baseId = "appNRtbTlWVuJ1lRQ";
-		String tableNameOrId = "tbl9zdg4EZZvfFAtz";
-		AirTableAPI airtableAPI = new AirTableAPI(apiKey,baseId);
-		JSONArray records = airtableAPI.listRecords(tableNameOrId);
-		for (int i=0; i<records.length(); i++) {
-			JSONObject userObject = records.getJSONObject(i);
-			String createdTime = userObject.getString("createdTime");
-			String id = userObject.getString("id");
-            String status = "";
-            String notes = "";
-            String name = "";
-			if (userObject.has("fields")) {
-                JSONObject fieldsObject = userObject.getJSONObject("fields");
-                if (fieldsObject.has("Status")) {
-                    status = fieldsObject.getString("Status");
-                }
-                if (fieldsObject.has("Notes")) {
-                    notes = fieldsObject.getString("Notes");
-                }
-                if (fieldsObject.has("Name")) {
-                    name = fieldsObject.getString("Name");
-                }
-            }
-            System.out.println("[+]User " + (i + 1) + ":");
-            System.out.println(" createdTime: " + createdTime);
-            System.out.println(" id: " + id);
-            System.out.println(" status: " + status);
-            System.out.println(" notes: " + notes);
-            System.out.println(" name: " + name);
-            System.out.println();
-		}
+		SlackDataFetching.printUSers();
 	}
 
 	public static void showChannels() throws IOException {
-		String apiKey = "patPgcLpaEVhtwBoz.b7e85982f76bec4edeebac2ad85286eb8652f660f8942123e15ae9aa2b0773e4";
-		String baseId = "appNRtbTlWVuJ1lRQ";
-		String tableNameOrId = "tbl9zdg4EZZvfFAtz";
-		AirTableAPI airtableAPI = new AirTableAPI(apiKey,baseId);
-		JSONArray records = airtableAPI.listRecords(tableNameOrId);
-		for (int i=0; i<records.length(); i++) {
-			JSONObject userObject = records.getJSONObject(i);
-			String createdTime = userObject.getString("createdTime");
-			String id = userObject.getString("id");
-            String status = "";
-            String notes = "";
-            String name = "";
-			if (userObject.has("fields")) {
-                JSONObject fieldsObject = userObject.getJSONObject("fields");
-                if (fieldsObject.has("Status")) {
-                    status = fieldsObject.getString("Status");
-                }
-                if (fieldsObject.has("Notes")) {
-                    notes = fieldsObject.getString("Notes");
-                }
-                if (fieldsObject.has("Name")) {
-                    name = fieldsObject.getString("Name");
-                }
-            }
-            System.out.println("[+]Channel " + (i + 1) + ":");
-            System.out.println(" createdTime: " + createdTime);
-            System.out.println(" id: " + id);
-            System.out.println(" status: " + status);
-            System.out.println(" notes: " + notes);
-            System.out.println(" name: " + name);
-            System.out.println();
-		}
+		SlackDataFetching.PrintChannels();
 	}
 
 	public static void createChannel() {
@@ -148,22 +86,5 @@ public class Main {
 		System.out.println("manageUsers");
 	}
 
-//	public static void fetchChannel() {
-//		Slack slack = Slack.getInstance();
-//		MethodsClient methods = slack.methods();
-//		SlackDataFetching fetching = new SlackDataFetching();
-//		
-//		// Fetch channels
-//		List<Conversation> channels = fetchChannels(methods);
-//		if (channels != null) {
-//			//Write channels to AirTable
-//		}
-//
-//		// Fetch users
-//		List<User> users = fetchUsers(methods);
-//		if (users != null) {
-//			//Write users to AirTable
-//		}
-//	}
 
 }
