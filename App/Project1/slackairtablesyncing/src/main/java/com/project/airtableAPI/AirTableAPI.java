@@ -19,22 +19,44 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.project.json.JsonUtils;
+
 public class AirTableAPI {
 	
-	private String apiKey;
-	private String baseId;
-	
-	public AirTableAPI(String apiKey, String baseId) {
-		this.apiKey = apiKey;
-		this.baseId = baseId;
+	private static final String API_KEY = "patAI3AeWkid1KoUX.76729d81c87bb327102a6667ce1fb87b0db5e26fa1436553ec56d8dfc0831c25";
+	private static final String BASE_ID = "appNRtbTlWVuJ1lRQ";
+	private static final String TABLE_USERS_ID = "tblgH8hhOc3S6o3T5";
+	private static final String TABLE_CHANNELS_ID = "tbl5zr74HLsR1phRV";
+
+	public static void createOrUpdateUser(JSONObject user) throws IOException {
+        String userId = user.getString("id");   
+        JSONArray listUsers = listRecords(TABLE_USERS_ID);
+        String existingUser = JsonUtils.findIdInJsonArray(userId, listUsers);
+        if (existingUser != null) {
+            updateRecord(TABLE_USERS_ID, userId, user);
+        } else {
+            createRecord(TABLE_USERS_ID, user);
+        }
+
+
+    }
+	public static void createOrUpdateChannel(JSONObject channel) throws IOException{
+        String channelId = channel.getString("id");
+        JSONArray listChannels = listRecords(TABLE_CHANNELS_ID);
+        String existingChannel = JsonUtils.findIdInJsonArray(channelId, listChannels);
+        if (existingChannel != null) {
+            updateRecord(TABLE_CHANNELS_ID, channelId, channel);
+        } else {
+            createRecord(TABLE_CHANNELS_ID, channel);
+        }
 	}
 	
-	public JSONObject createRecord(String tableName, JSONObject fields) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseId + "/" + tableName;
+	public static JSONObject createRecord(String tableName, JSONObject fields) throws IOException {
+		String url = "https://api.airtable.com/v0/" + BASE_ID + "/" + tableName;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(url);
 		
-		httpPost.setHeader("Authorization", "Bearer " + apiKey);
+		httpPost.setHeader("Authorization", "Bearer " + API_KEY);
 		httpPost.setHeader("Content-Type", "application/json");
 		
 		JSONObject body = new JSONObject();
@@ -51,12 +73,12 @@ public class AirTableAPI {
 		return jsonResponse;
 	}
 	
-	public JSONObject retrieveRecord(String tableName, String recordId) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseId + "/" + tableName + "/" + recordId;
+	public static JSONObject retrieveRecord(String tableName, String recordId) throws IOException {
+		String url = "https://api.airtable.com/v0/" + BASE_ID + "/" + tableName + "/" + recordId;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(url);
 		
-		httpGet.setHeader("Authorization", "Bearer " + apiKey);
+		httpGet.setHeader("Authorization", "Bearer " + API_KEY);
 		
 		HttpResponse response = httpClient.execute(httpGet);
 		HttpEntity responseEntity = response.getEntity();
@@ -66,12 +88,12 @@ public class AirTableAPI {
 		return jsonResponse;
 	}
 	
-	public JSONObject updateRecord(String tableName, String recordId, JSONObject fields) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseId + "/" + tableName + "/" + recordId;
+	public static JSONObject updateRecord(String tableName, String recordId, JSONObject fields) throws IOException {
+		String url = "https://api.airtable.com/v0/" + BASE_ID + "/" + tableName + "/" + recordId;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPatch httpPatch = new HttpPatch(url);
 		
-		httpPatch.setHeader("Authorization", "Bearer " + apiKey);
+		httpPatch.setHeader("Authorization", "Bearer " + API_KEY);
 		httpPatch.setHeader("Content-Type", "application/json");
 		
 		JSONObject body = new JSONObject();
@@ -88,22 +110,22 @@ public class AirTableAPI {
 		return jsonResponse;
 	}
 	
-	public void deleteRecord(String tableName, String recordId) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseId + "/" + tableName + "/" + recordId;
+	public static void deleteRecord(String tableName, String recordId) throws IOException {
+		String url = "https://api.airtable.com/v0/" + BASE_ID + "/" + tableName + "/" + recordId;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpDelete httpDelete = new HttpDelete(url);
 		
-		httpDelete.setHeader("Authorization", "Bearer " + apiKey);
+		httpDelete.setHeader("Authorization", "Bearer " + API_KEY);
 		
 		httpClient.execute(httpDelete);
 	}
 	
-	public JSONArray listRecords(String tableName) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseId + "/" + tableName;
+	public static JSONArray listRecords(String tableName) throws IOException {
+		String url = "https://api.airtable.com/v0/" + BASE_ID + "/" + tableName;
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(url);
 		
-		httpGet.setHeader("Authorization", "Bearer " + apiKey);
+		httpGet.setHeader("Authorization", "Bearer " + API_KEY);
 		
 		List<JSONObject> records = new ArrayList<JSONObject>();
 		String offset = null;

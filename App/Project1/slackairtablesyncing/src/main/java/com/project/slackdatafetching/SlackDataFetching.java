@@ -1,6 +1,7 @@
 package com.project.slackdatafetching;
 
 import com.google.gson.GsonBuilder;
+import com.project.airtableAPI.AirTableAPI;
 import com.google.gson.Gson;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -12,6 +13,10 @@ import com.slack.api.methods.response.users.UsersListResponse;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,30 +26,64 @@ import java.util.List;
 public class SlackDataFetching {
     // Slack API credentials
     private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
-
-    public static void PrintChannels() {
+    
+    public static void airtableFetching() throws IOException{
+		//get listUsers and listChannels in Slack
+        Slack slack = Slack.getInstance();
+        MethodsClient methods = slack.methods();
+        
+        //get listChannels
+        List<Conversation> channels = fetchChannels(methods);
+        String channelsString = null;
+        JSONArray channelsJSON = null;
+        if (channels != null) {
+            channelsString = convertToString(extractChannelData(channels));
+            channelsJSON = new JSONArray(channelsString);
+        }
+        
+        //get listUsers
+        List<User> users = fetchUsers(methods);
+        String usersString = null;
+        JSONArray usersJSON = null;
+        if (users != null) {
+            usersString = convertToString(extractUserData(users));
+            usersJSON = new JSONArray (usersString);
+        }
+ 
+        //create record data in airtable or update if exis
+        for (int i=0; i<usersJSON.length(); i++) {
+        	JSONObject userObject = usersJSON.getJSONObject(i);
+    		AirTableAPI.createOrUpdateUser(userObject);
+        }
+        for (int j=0; j<channelsJSON.length(); j++) {
+        	JSONObject channelObject = channelsJSON.getJSONObject(j);
+        	AirTableAPI.createOrUpdateChannel(channelObject);
+        }
+    }
+    
+    public static void printChannels() {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
 
         List<Conversation> channels = fetchChannels(methods);
         if (channels != null) {
-            String channelsJson = convertToJson(extractChannelData(channels));
-            System.out.println("Channels data:\n" + channelsJson);
+            String channelsString = convertToString(extractChannelData(channels));
+            System.out.println("Channels data:\n" + channelsString);
         }
     }
     
-    public static void printUSers() {
+    public static void printUsers() {
     	Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
         
         List<User> users = fetchUsers(methods);
         if (users != null) {
-            String usersJson = convertToJson(extractUserData(users));
-            System.out.println("Users data:\n" + usersJson);
+            String usersString = convertToString(extractUserData(users));
+            System.out.println("Users data:\n" + usersString);
         }
     }
 
-    private static List<Conversation> fetchChannels(MethodsClient methods) {
+    public static List<Conversation> fetchChannels(MethodsClient methods) {
         try {
             ConversationsListRequest request = ConversationsListRequest.builder()
                     .token(SLACK_TOKEN)
@@ -61,7 +100,7 @@ public class SlackDataFetching {
         return null;
     }
 
-    private static List<User> fetchUsers(MethodsClient methods) {
+    public static List<User> fetchUsers(MethodsClient methods) {
         try {
             UsersListRequest request = UsersListRequest.builder()
                     .token(SLACK_TOKEN)
@@ -78,7 +117,7 @@ public class SlackDataFetching {
         return null;
     }
 
-    private static List<ChannelData> extractChannelData(List<Conversation> channels) {
+    public static List<ChannelData> extractChannelData(List<Conversation> channels) {
         List<ChannelData> channelDataList = new ArrayList<>();
         for (Conversation channel : channels) {
             ChannelData channelData = new ChannelData();
@@ -95,7 +134,7 @@ public class SlackDataFetching {
         return channelDataList;
     }
 
-    private static List<UserData> extractUserData(List<User> users) {
+    public static List<UserData> extractUserData(List<User> users) {
         List<UserData> userDataList = new ArrayList<>();
         for (User user : users) {
             UserData userData = new UserData();
@@ -123,7 +162,7 @@ public class SlackDataFetching {
         return "N/A";
     }
 
-    private static String convertToJson(Object object) {
+    private static String convertToString(Object object) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(object);
     }
