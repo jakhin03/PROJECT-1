@@ -21,9 +21,9 @@ import com.slack.api.model.User;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
+		autoFetching();
 		Scanner sc = new Scanner(System.in);
 		int buff = 0;
-		
 		System.out.println(
 				"Slack management program\nEnter your choice:\n[1] Show Slack's channels\n[2] Show Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
 		int option = sc.nextInt();
@@ -58,13 +58,24 @@ public class Main {
 		System.out.println("Program ended");
 		sc.close();
 	}
+	
+	public static void autoFetching() {
+		try {
+			SlackDataFetching.airtableFetching();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public static void showUsers() throws IOException {
-		SlackDataFetching.printUSers();
+		SlackDataFetching.printUsers();
 	}
 
 	public static void showChannels() throws IOException {
-		SlackDataFetching.PrintChannels();
+		JSONArray array = AirTableAPI.listRecords("tbl5zr74HLsR1phRV");
+		System.out.println(array.toString());
+		SlackDataFetching.printChannels();
 	}
 
 	public static void createChannel() {
@@ -85,6 +96,8 @@ public class Main {
 		//for debug
 		System.out.println("manageUsers");
 	}
+	
+
 
 
 }
