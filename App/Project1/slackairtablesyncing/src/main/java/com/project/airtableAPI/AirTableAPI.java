@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
@@ -58,6 +59,7 @@ public class AirTableAPI {
 		
 		httpPost.setHeader("Authorization", "Bearer " + API_KEY);
 		httpPost.setHeader("Content-Type", "application/json");
+		httpPost.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
 		
 		JSONObject body = new JSONObject();
 		body.put("fields", fields);
@@ -79,6 +81,7 @@ public class AirTableAPI {
 		HttpGet httpGet = new HttpGet(url);
 		
 		httpGet.setHeader("Authorization", "Bearer " + API_KEY);
+		httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
 		
 		HttpResponse response = httpClient.execute(httpGet);
 		HttpEntity responseEntity = response.getEntity();
@@ -95,6 +98,7 @@ public class AirTableAPI {
 		
 		httpPatch.setHeader("Authorization", "Bearer " + API_KEY);
 		httpPatch.setHeader("Content-Type", "application/json");
+		httpPatch.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
 		
 		JSONObject body = new JSONObject();
 		body.put("fields", fields);
@@ -116,6 +120,7 @@ public class AirTableAPI {
 		HttpDelete httpDelete = new HttpDelete(url);
 		
 		httpDelete.setHeader("Authorization", "Bearer " + API_KEY);
+		httpDelete.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
 		
 		httpClient.execute(httpDelete);
 	}
@@ -126,6 +131,7 @@ public class AirTableAPI {
 		HttpGet httpGet = new HttpGet(url);
 		
 		httpGet.setHeader("Authorization", "Bearer " + API_KEY);
+		httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
 		
 		List<JSONObject> records = new ArrayList<JSONObject>();
 		String offset = null;
