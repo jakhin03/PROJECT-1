@@ -1,31 +1,14 @@
 package com.project.main;
 
-import com.project.airtableAPI.*;
 import com.project.slackdatafetching.*;
 
 import java.io.IOException;
 import java.util.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
-
-import com.slack.api.Slack;
-import com.slack.api.methods.MethodsClient;
-import com.slack.api.methods.SlackApiException;
-import com.slack.api.methods.request.conversations.ConversationsListRequest;
-import com.slack.api.methods.request.users.UsersListRequest;
-import com.slack.api.methods.response.conversations.ConversationsListResponse;
-import com.slack.api.methods.response.users.UsersListResponse;
-import com.slack.api.model.Conversation;
-import com.slack.api.model.User;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		//autoFetching();
-		Scanner sc = new Scanner(System.in);
-		int buff = 0;
-
-	    String logo = "  ___  ___  ___  ___  ___.---------------.\n"
+		autoFetching();
+		String logo = "\n  ___  ___  ___  ___  ___.---------------.\n"
                 + ".'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`   .  ____ ___ \\\n"
                 + "|\\/ __\\/ __\\/ __\\/ __\\/ _:\\   |`.  \\  \\___ \\\n"
                 + " \\\\'\\__\\'\\__\\'\\__\\'\\__\\'\\_`.__|\"\"`. \\  \\___ \\\n"
@@ -49,6 +32,9 @@ public class Main {
 	    System.out.println(centerString(title, width));
 	    System.out.println(line);
 	    System.out.print(menu);
+	    
+		Scanner sc = new Scanner(System.in);
+		int buff = 0;
 		int option = sc.nextInt();
 		while (option != 0) {
 			buff++;
