@@ -31,20 +31,26 @@
 		<artifactId>slack-api-client</artifactId>
 		<version>1.29.2</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>2.0.7</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-simple</artifactId>
+		<version>2.0.7</version>
+	</dependency>
 	<dependency>
 		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>fluent-hc</artifactId>
+		<artifactId>httpclient</artifactId>
 		<version>4.5.14</version>
 	</dependency>
 	<dependency>
 		<groupId>org.json</groupId>
 		<artifactId>json</artifactId>
 		<version>20230227</version>
-	</dependency>
-<!-- Progress bar -->
-	<dependency>
-		<groupId>me.tongfei</groupId>
-		<artifactId>progressbar</artifactId>
-		<version>0.9.4</version>
 	</dependency>
 ```

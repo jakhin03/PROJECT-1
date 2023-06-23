@@ -21,11 +21,34 @@ import com.slack.api.model.User;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		autoFetching();
+		//autoFetching();
 		Scanner sc = new Scanner(System.in);
 		int buff = 0;
-		System.out.println(
-				"Slack management program\nEnter your choice:\n[1] Show Slack's channels\n[2] Show Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
+
+	    String logo = "  ___  ___  ___  ___  ___.---------------.\n"
+                + ".'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`   .  ____ ___ \\\n"
+                + "|\\/ __\\/ __\\/ __\\/ __\\/ _:\\   |`.  \\  \\___ \\\n"
+                + " \\\\'\\__\\'\\__\\'\\__\\'\\__\\'\\_`.__|\"\"`. \\  \\___ \\\n"
+                + "  \\\\/ __\\/ __\\/ __\\/ __\\/ __:                \\\n"
+                + "   \\\\'\\__\\'\\__\\'\\__\\ \\__\\'\\_;-----------------`\n"
+	    		+ "    \\\\/   \\/   \\/   \\/   \\/ :               tk|\n"
+	    		+ "     \\|______________________;________________|\n";
+	    String menu = "\nPlease select an option:\n\n"
+                + "1. Show Slack's channels\n"
+                + "2. Show Slack user's information\n"
+                + "3. Create a channels\n"
+                + "4. User management\n"
+                + "0. Exit\n\n"
+                + "Enter your choice (1-5): ";
+
+	    System.out.println(logo);
+	    String title = "WELCOME TO SLACK MANAGEMENT PROGRAM!";
+	    int width = 60;
+	    String line = "-".repeat(width);
+	    System.out.println(line);
+	    System.out.println(centerString(title, width));
+	    System.out.println(line);
+	    System.out.print(menu);
 		int option = sc.nextInt();
 		while (option != 0) {
 			buff++;
@@ -50,8 +73,7 @@ public class Main {
 				System.out.println("Maximum requests!");
 				break;
 			}
-			System.out.println(
-					"------------------------------------------------------------\nEnter your choice:\n[1] Browse Slack's channels\n[2] Browse Slack user's information\n[3] Create a channels\n[4] User management\n[0] Exit");
+			System.out.print(menu);
 			option = sc.nextInt();
 
 		}
@@ -67,14 +89,12 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static void showUsers() throws IOException {
 		SlackDataFetching.printUsers();
 	}
 
 	public static void showChannels() throws IOException {
-		JSONArray array = AirTableAPI.listRecords("tbl5zr74HLsR1phRV");
-		System.out.println(array.toString());
 		SlackDataFetching.printChannels();
 	}
 
@@ -97,7 +117,16 @@ public class Main {
 		System.out.println("manageUsers");
 	}
 	
-
+	public static String centerString(String text, int width) {
+	    if (text.length() > width) {
+	        return text.substring(0, width);
+	    } else {
+	        int padding = width - text.length();
+	        int leftPadding = padding / 2;
+	        int rightPadding = padding - leftPadding;
+	        return " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
+	    }
+	    }
 
 
 }
