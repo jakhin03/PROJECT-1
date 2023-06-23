@@ -2,6 +2,7 @@ package com.project.slackdatafetching;
 
 import com.google.gson.GsonBuilder;
 import com.project.airtableAPI.AirTableAPI;
+import com.project.main.ProgressBar;
 import com.google.gson.Gson;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class SlackDataFetching {
     // Slack API credentials
@@ -43,22 +45,35 @@ public class SlackDataFetching {
         
         //get listUsers
         List<User> users = fetchUsers(methods);
-        String usersString = null;
-        JSONArray usersJSON = null;
+        String usersString = "";
+        JSONArray usersJSON = new JSONArray();
         if (users != null) {
             usersString = convertToString(extractUserData(users));
             usersJSON = new JSONArray (usersString);
         }
  
-        //create record data in airtable or update if exis
-        for (int i=0; i<usersJSON.length(); i++) {
-        	JSONObject userObject = usersJSON.getJSONObject(i);
-    		AirTableAPI.createOrUpdateUser(userObject);
-        }
-        for (int j=0; j<channelsJSON.length(); j++) {
-        	JSONObject channelObject = channelsJSON.getJSONObject(j);
-        	AirTableAPI.createOrUpdateChannel(channelObject);
-        }
+        //create record data in airtable or update if exist
+        	for (int i=0; i<usersJSON.length(); i++) {
+            	JSONObject userObject = usersJSON.getJSONObject(i);
+        		try {
+    				AirTableAPI.createOrUpdateUser(userObject);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+        		ProgressBar.printProgressBar("Syncing users data", "In progess...",i+1, usersJSON.length());
+        	}
+        	for (int j=0; j<channelsJSON.length(); j++) {
+        		JSONObject channelObject = channelsJSON.getJSONObject(j);
+            	try {
+    				AirTableAPI.createOrUpdateChannel(channelObject);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            	ProgressBar.printProgressBar("Syncing channels data", "In progress...", j+1, channelsJSON.length());
+        	}
+       
     }
     
     public static void printChannels() {
@@ -68,7 +83,31 @@ public class SlackDataFetching {
         List<Conversation> channels = fetchChannels(methods);
         if (channels != null) {
             String channelsString = convertToString(extractChannelData(channels));
-            System.out.println("Channels data:\n" + channelsString);
+            JSONArray channelsJSON = new JSONArray(channelsString);
+            System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s\n",
+                    "Name", "ID", "Creator", "Create Date", "Privacy", "Status","Topic", "Description");
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+            // Print the data
+            for (int i = 0; i < channelsJSON.length(); i++) {
+                JSONObject channel = channelsJSON.getJSONObject(i);
+                String name = channel.optString("name", "");
+                String id = channel.optString("id", "");
+                String topic = channel.optString("topic", "");
+                if (topic.length() > 25) { // litmit maximum length of characters
+                    topic = topic.substring(0, 25) + "...";
+                }
+                String description = channel.optString("description", "");
+                if (description.length() > 50) { // litmit maximum length of characters
+                    description = description.substring(0, 50) + "...";
+                }
+                String creator = channel.optString("creator", "");
+                String createDate = channel.optString("createDate", "");
+                String privacy = channel.optString("privacy", "");
+                String status = channel.optString("status", "");
+                System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s\n",
+                        name, id, creator, createDate, privacy, status,topic, description);
+            }
         }
     }
     
@@ -79,7 +118,26 @@ public class SlackDataFetching {
         List<User> users = fetchUsers(methods);
         if (users != null) {
             String usersString = convertToString(extractUserData(users));
-            System.out.println("Users data:\n" + usersString);
+            JSONArray usersJSON = new JSONArray(usersString);
+            System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s\n",
+                    "Name", "ID", "Email", "Display Name", "Full Name", "Status", "Role",
+                    "User Create Date", "Status Change Date");
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            for (int i = 0; i < usersJSON.length(); i++) {
+                JSONObject user = usersJSON.getJSONObject(i);
+                String name = user.optString("name", "");
+                String id = user.optString("id", "");
+                String email = user.optString("email", "");
+                String displayName = user.optString("displayName", "");
+                String fullName = user.optString("fullName", "");
+                String status = user.optString("status", "");
+                String role = user.optString("role", "");
+                String userCreateDate = user.optString("userCreateDate", "");
+                String statusChangeDate = user.optString("statusChangeDate", "");
+                System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s\n",
+                        name, id, email, displayName, fullName, status, role,
+                        userCreateDate, statusChangeDate);
+            }
         }
     }
 
