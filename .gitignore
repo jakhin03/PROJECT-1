@@ -1,5 +1,6 @@
 *.tmp
 *.class
+*.log
 App/Project1/slackairtablesyncing/.classpath
 App/Project1/slackairtablesyncing/.project
 App/Project1/slackairtablesyncing/.settings
