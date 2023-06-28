@@ -39,8 +39,6 @@ public class AirTableAPI {
         } else {
             createRecord(tableUsersID, user);
         }
-
-
     }
 	public static void createOrUpdateChannel(JSONObject channel) throws IOException{
         String channelId = channel.getString("id");
