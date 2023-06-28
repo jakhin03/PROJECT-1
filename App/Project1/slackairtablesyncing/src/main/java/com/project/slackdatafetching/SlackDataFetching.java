@@ -3,6 +3,7 @@ package com.project.slackdatafetching;
 import com.google.gson.GsonBuilder;
 import com.project.airtableAPI.AirTableAPI;
 import com.project.main.ProgressBar;
+import com.project.secrets.Secrets;
 import com.google.gson.Gson;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -26,8 +27,9 @@ import java.util.List;
 
 public class SlackDataFetching {
     // Slack API credentials
-    private static final String SLACK_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
-    
+	
+	static String slackToken = Secrets.getSlackBotToken();
+	
     public static void airtableFetching() throws IOException{
 		//get listUsers and listChannels in Slack
         Slack slack = Slack.getInstance();
@@ -143,7 +145,7 @@ public class SlackDataFetching {
     public static List<Conversation> fetchChannels(MethodsClient methods) {
         try {
             ConversationsListRequest request = ConversationsListRequest.builder()
-                    .token(SLACK_TOKEN)
+                    .token(slackToken)
                     .build();
             ConversationsListResponse response = methods.conversationsList(request);
             if (response.isOk()) {
@@ -160,7 +162,7 @@ public class SlackDataFetching {
     public static List<User> fetchUsers(MethodsClient methods) {
         try {
             UsersListRequest request = UsersListRequest.builder()
-                    .token(SLACK_TOKEN)
+                    .token(slackToken)
                     .build();
             UsersListResponse response = methods.usersList(request);
             if (response.isOk()) {
