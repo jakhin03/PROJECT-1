@@ -2,6 +2,7 @@ package com.project.main;
 
 import com.project.createchannels.CreateChannels;
 import com.project.slackdatafetching.*;
+import com.project.inviteusers.*;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -23,9 +24,10 @@ public class Main {
                 + "1. Show Slack's channels\n"
                 + "2. Show Slack user's information\n"
                 + "3. Create a channels\n"
-                + "4. User management\n"
+                + "4. Invite user to channel\n"
+                + "5. User management\n"
                 + "0. Exit\n\n"
-                + "Enter your choice (1-5): ";
+                + "Enter your choice (1-5):\n";
 
 	    System.out.println(logo);
 	    String title = "WELCOME TO SLACK MANAGEMENT PROGRAM!";
@@ -52,6 +54,9 @@ public class Main {
 				createChannel();
 				break;
 			case 4:
+				inviteUser();
+				break;
+			case 5:
 				manageUsers();
 				break;
 			default:
@@ -62,8 +67,14 @@ public class Main {
 				System.out.println("Maximum requests!");
 				break;
 			}
+			
 			System.out.print(menu);
-			option = sc.nextInt();
+			
+			if (sc.hasNextInt()) {
+				option = sc.nextInt();
+			} else {
+				System.out.println("No input available.");
+			}
 
 		}
 		System.out.println("Program ended");
@@ -90,29 +101,34 @@ public class Main {
 	public static void createChannel() throws Exception {
 		// create channel bang slack API
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter channel's name: ");
+		System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\nEnter channel's name:\n");
 		String channelName = reader.readLine();
 		if (channelName.trim().isEmpty()) {
 			System.out.println("Channel name cannot be empty.");
 			return;
 		}
 		
-		System.out.print("Enter '0' for private channel or '1' for public channel: ");
+		System.out.print("Enter '0' for private channel or '1' for public channel:\n");
 		String channelType = reader.readLine();
-		boolean isPrivate = channelType.equals("0");
+		boolean isPrivate = false;
+
+		while (!channelType.equals("0") && !channelType.equals("1")) {
+		    System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
+		    channelType = reader.readLine();
+		}
+
+		isPrivate = channelType.equals("0");
 		
-		System.out.print("Enter channel' description (optional): ");
+		System.out.print("Enter channel' description (optional):\n");
 		String description = reader.readLine();
 		CreateChannels.createChannel(channelName, description, isPrivate);
 		
-
-		// Them option them user sau khi da tao channel
-		addUser();
 	}
 
-	public static void addUser() {
+	public static void inviteUser() throws Exception {
 		//for debug
-		System.out.println("addUser");
+		System.out.println("inviteUser");
+		InviteUsers.inviteUser();
 	}
 
 	public static void manageUsers() {
