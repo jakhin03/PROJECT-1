@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		autoFetching();
 		String logo = "\n  ___  ___  ___  ___  ___.---------------.\n"
                 + ".'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`   .  ____ ___ \\\n"
@@ -87,7 +87,7 @@ public class Main {
 		SlackDataFetching.printChannels();
 	}
 
-	public static void createChannel() throws IOException {
+	public static void createChannel() throws Exception {
 		// create channel bang slack API
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Enter channel's name: ");
