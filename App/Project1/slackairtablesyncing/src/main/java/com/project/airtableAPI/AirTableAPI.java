@@ -32,7 +32,7 @@ public class AirTableAPI {
 
 	public static void createOrUpdateUser(JSONObject user) throws IOException {
         String userId = user.getString("id");   //slack users
-        JSONArray listUsers = listRecords(TABLE_USERS_ID); //airtable users
+        JSONArray listUsers = listRecords(tableUsersID); //airtable users
         String existingUser = JsonUtils.findIdInJsonArray(userId, listUsers); //check if user_id slack in airtable
         if (existingUser != null) {
             updateRecord(tableUsersID, userId, user);
