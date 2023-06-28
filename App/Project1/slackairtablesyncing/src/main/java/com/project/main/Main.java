@@ -1,12 +1,15 @@
 package com.project.main;
 
+import com.project.createchannels.CreateChannels;
 import com.project.slackdatafetching.*;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		autoFetching();
 		String logo = "\n  ___  ___  ___  ___  ___.---------------.\n"
                 + ".'\\__\\'\\__\\'\\__\\'\\__\\'\\__,`   .  ____ ___ \\\n"
@@ -84,10 +87,24 @@ public class Main {
 		SlackDataFetching.printChannels();
 	}
 
-	public static void createChannel() {
-		//for debug
-		System.out.println("createChanenl");
-		// create chanenl bang slack API
+	public static void createChannel() throws Exception {
+		// create channel bang slack API
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter channel's name: ");
+		String channelName = reader.readLine();
+		if (channelName.trim().isEmpty()) {
+			System.out.println("Channel name cannot be empty.");
+			return;
+		}
+		
+		System.out.print("Enter '0' for private channel or '1' for public channel: ");
+		String channelType = reader.readLine();
+		boolean isPrivate = channelType.equals("0");
+		
+		System.out.print("Enter channel' description (optional): ");
+		String description = reader.readLine();
+		CreateChannels.createChannel(channelName, description, isPrivate);
+		
 
 		// Them option them user sau khi da tao channel
 		addUser();
