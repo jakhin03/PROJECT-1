@@ -31,16 +31,14 @@ public class AirTableAPI {
 	static String tableChannelsID = Secrets.getTableChannelsID();
 
 	public static void createOrUpdateUser(JSONObject user) throws IOException {
-        String userId = user.getString("id");   
-        JSONArray listUsers = listRecords(tableUsersID);
-        String existingUser = JsonUtils.findIdInJsonArray(userId, listUsers);
+        String userId = user.getString("id");   //slack users
+        JSONArray listUsers = listRecords(tableUsersID); //airtable users
+        String existingUser = JsonUtils.findIdInJsonArray(userId, listUsers); //check if user_id slack in airtable
         if (existingUser != null) {
             updateRecord(tableUsersID, userId, user);
         } else {
             createRecord(tableUsersID, user);
         }
-
-
     }
 	public static void createOrUpdateChannel(JSONObject channel) throws IOException{
         String channelId = channel.getString("id");
