@@ -128,10 +128,8 @@ public class Main {
 	}
 
 	public static void inviteUser() throws Exception {
-		//for debug
-		System.out.println("inviteUser");
 		InviteUsers.inviteUser();
-    System.out.println("Press Enter key to get back...");
+		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
