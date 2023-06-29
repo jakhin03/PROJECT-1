@@ -136,7 +136,7 @@ public class Main {
 		showMenu();
 	}
 
-	public static void manageUsers() {
+	public static void manageUsers() throws Exception {
 		//for debug
 		System.out.println("manageUsers");
 		System.out.println("Press Enter key to get back...");
