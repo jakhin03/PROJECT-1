@@ -2,6 +2,7 @@ package com.project.main;
 
 import com.project.createchannels.CreateChannels;
 import com.project.slackdatafetching.*;
+import com.project.inviteusers.*;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -41,7 +42,7 @@ public class Main {
 
 	public static void showMenu() throws Exception {
 		String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
-				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. User management\n"
+				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. User management\n"
 				+ "0. Exit\n\n" + "Enter your choice (1-5): ";
 		System.out.print(menu);
 		int option = sc.nextInt();
@@ -59,7 +60,10 @@ public class Main {
 		case 3:
 			createChannel();
 			break;
-		case 4:
+    		case 4:
+			inviteUser();
+			break;
+		case 5:
 			manageUsers();
 			break;
 		default:
@@ -95,40 +99,45 @@ public class Main {
 	public static void createChannel() throws Exception {
 		// create channel bang slack API
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter channel's name: ");
+		System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\nEnter channel's name:\n");
 		String channelName = reader.readLine();
 		if (channelName.trim().isEmpty()) {
 			System.out.println("Channel name cannot be empty.");
 			System.out.println("Press Enter to get back...");
 			System.in.read();
 			showMenu();
-		}
-
-		System.out.print("Enter '0' for private channel or '1' for public channel: ");
+		}		
+    
+		System.out.print("Enter '0' for private channel or '1' for public channel:\n");
 		String channelType = reader.readLine();
-		boolean isPrivate = true;
-		if (channelType.equals("0")){
-			isPrivate = true;
-		}else if (channelType.equals("1")) {
-			isPrivate = false;
-		}else {
-			System.out.println("Invalid choice");
-			System.out.println("Press Enter key to get back...");
-			System.in.read();
-			showMenu();
+		boolean isPrivate = false;
+
+		while (!channelType.equals("0") && !channelType.equals("1")) {
+		    System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
+		    channelType = reader.readLine();
 		}
 
-		System.out.print("Enter channel' description (optional): ");
+		isPrivate = channelType.equals("0");
+		
+		System.out.print("Enter channel' description (optional):\n");
 		String description = reader.readLine();
 		CreateChannels.createChannel(channelName, description, isPrivate);
-
-		System.out.println("Press Enter key to get back...");
+    System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
 
-	public static void manageUsers() throws Exception {
-		// for debug
+	public static void inviteUser() throws Exception {
+		//for debug
+		System.out.println("inviteUser");
+		InviteUsers.inviteUser();
+    System.out.println("Press Enter key to get back...");
+		System.in.read();
+		showMenu();
+	}
+
+	public static void manageUsers() {
+		//for debug
 		System.out.println("manageUsers");
 		System.out.println("Press Enter key to get back...");
 		System.in.read();

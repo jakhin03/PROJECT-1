@@ -13,6 +13,7 @@ import com.slack.api.methods.request.users.UsersListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.response.users.UsersListResponse;
 import com.slack.api.model.Conversation;
+import com.slack.api.model.ConversationType;
 import com.slack.api.model.User;
 
 import org.json.JSONArray;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -146,6 +148,7 @@ public class SlackDataFetching {
         try {
             ConversationsListRequest request = ConversationsListRequest.builder()
                     .token(slackToken)
+                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL))
                     .build();
             ConversationsListResponse response = methods.conversationsList(request);
             if (response.isOk()) {
