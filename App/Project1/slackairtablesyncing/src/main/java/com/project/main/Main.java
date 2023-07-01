@@ -1,5 +1,6 @@
 package com.project.main;
 
+import com.project.airtableAPI.AirTableAPI;
 import com.project.createchannels.CreateChannels;
 import com.project.slackdatafetching.*;
 import com.project.inviteusers.*;
@@ -11,16 +12,10 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 
 public class Main {
 
 	private static Scanner sc = new Scanner(System.in);
-	private static JTextArea outputTextArea;
 
 	public static void main(String[] args) throws Exception {
 		//autoFetching();
@@ -92,7 +87,8 @@ public class Main {
 			showMenu();
 			break;
 		case 1:
-			autoFetching();
+			autoFetching("Manual syncing successful!");
+			System.out.println("Syncing data...");
 			System.out.println("Press Enter key to get back...");
 			System.in.read();
 			showMenu();
@@ -115,17 +111,19 @@ public class Main {
 		    @SuppressWarnings("resource")
 			Scanner scanner = new Scanner(System.in);
 
-	        System.out.print("Enter hours (0-23): ");
+	        System.out.print("Enter hour (0-23): ");
 	        int hour = scanner.nextInt();
 
-	        System.out.print("Enter minutes (0-59): ");
+	        System.out.print("Enter minute (0-59): ");
 	        int minute = scanner.nextInt();
+	        
+	        System.out.printf("Data will be syncing at %d:%d\n", hour,minute);
 
 	        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	        scheduler.scheduleAtFixedRate(new Runnable() {
 	            @Override
 	            public void run() {
-	               autoFetching();
+	               autoFetching("Auto-scheduling syncing successful!");
 	            }
 	        }, getDelay(hour, minute), 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
 	    }
@@ -146,14 +144,13 @@ public class Main {
 	}
 		
 	
-	public static void autoFetching(){
+	public static void autoFetching(String description){
 		 Thread thread = new Thread(new Runnable() {
              @Override
              public void run() {
             	 try {
          			SlackDataFetching.airtableFetching();
-                	String output = "Syncing successfully!\n";
-                    outputTextArea.append(output);
+         			AirTableAPI.createLogs(description);
          		}catch (IOException e) {
          			System.out.println("Network Error!");
          		}
