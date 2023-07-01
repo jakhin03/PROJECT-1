@@ -8,10 +8,19 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class Main {
 
 	private static Scanner sc = new Scanner(System.in);
+	private static JTextArea outputTextArea;
 
 	public static void main(String[] args) throws Exception {
 		//autoFetching();
@@ -40,16 +49,16 @@ public class Main {
 		System.out.println(line);
 	}
 
-	public static void showMenu() throws Exception {
+	public static void showMenu() throws IOException {
 		String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
-				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. User management\n"
+				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
 				+ "0. Exit\n\n" + "Enter your choice (1-5): ";
 		System.out.print(menu);
 		int option = sc.nextInt();
 		
 		switch (option) {
 		case 0:
-			System.out.println("Program ended");
+			System.out.println("Program ended!");
 			break;
 		case 1:
 			showChannels();
@@ -60,11 +69,11 @@ public class Main {
 		case 3:
 			createChannel();
 			break;
-    		case 4:
+    	case 4:
 			inviteUser();
 			break;
 		case 5:
-			manageUsers();
+			showMenuFetching();
 			break;
 		default:
 			System.out.println("Invalid input!");
@@ -73,70 +82,143 @@ public class Main {
 		}
 	}
 
-	public static void autoFetching() {
-		try {
-			SlackDataFetching.airtableFetching();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static void showMenuFetching() throws IOException{
+		String menu = "\nPlease select an option:\n\n" + "1. Fetch data from Slack to AirTable\n" + "2. Schedule fetching task";
+		System.out.println(menu);
+		int option = sc.nextInt();
+		
+		switch (option) {
+		case 0:
+			showMenu();
+			break;
+		case 1:
+			autoFetching();
+			System.out.println("Press Enter key to get back...");
+			System.in.read();
+			showMenu();
+			
+			break;
+		case 2:
+			taskScheduling();
+			System.out.println("Press Enter key to get back...");
+			System.in.read();
+			showMenu();
+			break;
+		default:
+			System.out.println("Invalid input!");
+			showMenuFetching();
+			break;
 		}
 	}
+	
+	public static void taskScheduling(){
+		    @SuppressWarnings("resource")
+			Scanner scanner = new Scanner(System.in);
 
-	public static void showUsers() throws Exception {
+	        System.out.print("Enter hours (0-23): ");
+	        int hour = scanner.nextInt();
+
+	        System.out.print("Enter minutes (0-59): ");
+	        int minute = scanner.nextInt();
+
+	        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	        scheduler.scheduleAtFixedRate(new Runnable() {
+	            @Override
+	            public void run() {
+	               autoFetching();
+	            }
+	        }, getDelay(hour, minute), 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
+	    }
+
+	    private static long getDelay(int hour, int minute) {
+	        Calendar now = Calendar.getInstance();
+	        Calendar scheduledTime = Calendar.getInstance();
+	        scheduledTime.set(Calendar.HOUR_OF_DAY, hour);
+	        scheduledTime.set(Calendar.MINUTE, minute);
+	        scheduledTime.set(Calendar.SECOND, 0);
+	        scheduledTime.set(Calendar.MILLISECOND, 0);
+
+	        if (scheduledTime.before(now)) {
+	            scheduledTime.add(Calendar.DAY_OF_MONTH, 1);
+	        }
+
+	        return scheduledTime.getTimeInMillis() - now.getTimeInMillis();
+	}
+		
+	
+	public static void autoFetching(){
+		 Thread thread = new Thread(new Runnable() {
+             @Override
+             public void run() {
+            	 try {
+         			SlackDataFetching.airtableFetching();
+                	String output = "Syncing successfully!\n";
+                    outputTextArea.append(output);
+         		}catch (IOException e) {
+         			System.out.println("Network Error!");
+         		}
+             }
+         });
+         thread.start();
+	}
+
+	public static void showUsers() throws IOException {
 		SlackDataFetching.printUsers();
 		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
 
-	public static void showChannels() throws Exception {
+	public static void showChannels() throws IOException  {
 		SlackDataFetching.printChannels();
 		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
 
-	public static void createChannel() throws Exception {
+	public static void createChannel() throws IOException{
 		// create channel bang slack API
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\nEnter channel's name:\n");
-		String channelName = reader.readLine();
-		if (channelName.trim().isEmpty()) {
-			System.out.println("Channel name cannot be empty.");
-			System.out.println("Press Enter to get back...");
-			System.in.read();
-			showMenu();
-		}		
-    
-		System.out.print("Enter '0' for private channel or '1' for public channel:\n");
-		String channelType = reader.readLine();
-		boolean isPrivate = false;
+		String channelName;
+		try {
+			channelName = reader.readLine();
+			if (channelName.trim().isEmpty()) {
+				System.out.println("Channel name cannot be empty.");
+				System.out.println("Press Enter to get back...");
+				System.in.read();
+				showMenu();
+				System.out.print("Enter '0' for private channel or '1' for public channel:\n");
+				String channelType = reader.readLine();
+				boolean isPrivate = false;
 
-		while (!channelType.equals("0") && !channelType.equals("1")) {
-		    System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
-		    channelType = reader.readLine();
+				while (!channelType.equals("0") && !channelType.equals("1")) {
+				    System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
+				    channelType = reader.readLine();
+				}
+
+				isPrivate = channelType.equals("0");
+				
+				System.out.print("Enter channel' description (optional):\n");
+				String description = reader.readLine();
+				CreateChannels.createChannel(channelName, description, isPrivate);
+			}
+		} catch (IOException e) {
+			System.out.println("Cant create channel!");
 		}
+    
+    	System.out.println("Press Enter key to get back...");
+		System.in.read();
+		showMenu();
+	}
 
-		isPrivate = channelType.equals("0");
+	public static void inviteUser() throws IOException{
+		try {
+			InviteUsers.inviteUser();
+		}catch (IOException e) {
+			System.out.println("Cant invtie user!");
+		}
 		
-		System.out.print("Enter channel' description (optional):\n");
-		String description = reader.readLine();
-		CreateChannels.createChannel(channelName, description, isPrivate);
-    System.out.println("Press Enter key to get back...");
-		System.in.read();
-		showMenu();
-	}
-
-	public static void inviteUser() throws Exception {
-		InviteUsers.inviteUser();
-		System.out.println("Press Enter key to get back...");
-		System.in.read();
-		showMenu();
-	}
-
-	public static void manageUsers() throws Exception {
-		//for debug
-		System.out.println("manageUsers");
 		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
