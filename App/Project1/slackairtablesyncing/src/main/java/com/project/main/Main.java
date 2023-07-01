@@ -60,7 +60,7 @@ public class Main {
 		case 3:
 			createChannel();
 			break;
-    case 4:
+    		case 4:
 			inviteUser();
 			break;
 		case 5:
