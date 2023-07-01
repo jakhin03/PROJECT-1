@@ -47,7 +47,7 @@ public class Main {
 	public static void showMenu() throws IOException {
 		String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
 				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
-				+ "0. Exit\n\n" + "Enter your choice (1-5): ";
+				+ "0. Exit\n\n" + "Enter your choice (0-5): ";
 		System.out.print(menu);
 		int option = sc.nextInt();
 		
