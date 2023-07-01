@@ -27,27 +27,29 @@ public class AirTableAPI {
 	
 	static String apiKey = Secrets.getAPIKey();
 	static String baseID = Secrets.getBaseID();
-	static String tableUsersID = Secrets.getTableUsersID();
-	static String tableChannelsID = Secrets.getTableChannelsID();
 
-	public static void createOrUpdateUser(JSONObject user) throws IOException {
-        String userId = user.getString("id");   //slack users
-        JSONArray listUsers = listRecords(tableUsersID); //airtable users
-        String existingUser = JsonUtils.findIdInJsonArray(userId, listUsers); //check if user_id slack in airtable
-        if (existingUser != null) {
-            updateRecord(tableUsersID, userId, user);
-        } else {
-            createRecord(tableUsersID, user);
+	public static void checkDeletedRecord(String airtableTableID, JSONObject airtableRecordObject, JSONArray slackRecordArray) throws IOException {
+		boolean is_deleted = true;
+		String airtableRecordId = airtableRecordObject.getString("id");   //AirTable users
+		JSONObject existingRecordObject = airtableRecordObject.getJSONObject("fields");
+		String existingRecordId = existingRecordObject.getString("id");
+        String is_existed = JsonUtils.findIdInSlackJsonArray(existingRecordId, slackRecordArray); //check if user_id slack in airtable
+        if (is_existed != null) {
+            is_deleted = false;
         }
-    }
-	public static void createOrUpdateChannel(JSONObject channel) throws IOException{
-        String channelId = channel.getString("id");
-        JSONArray listChannels = listRecords(tableChannelsID);
-        String existingChannel = JsonUtils.findIdInJsonArray(channelId, listChannels);
-        if (existingChannel != null) {
-            updateRecord(tableChannelsID, channelId, channel);
+        if (is_deleted==true) {
+        	JSONObject deletedSlackRecordrObject = existingRecordObject.put("is_deleted", "1");
+        	updateRecord(airtableTableID, airtableRecordId, deletedSlackRecordrObject);
+        }
+	}
+	
+	public static void createOrUpdateRecord(String airtableTableID, JSONObject slackObject, JSONArray airtableArray) throws IOException{
+        String slackObjectId = slackObject.getString("id");
+        String existingRecordId = JsonUtils.findIdInAirtableJsonArray(slackObjectId, airtableArray);
+        if (existingRecordId != null) {
+            updateRecord(airtableTableID, existingRecordId, slackObject);
         } else {
-            createRecord(tableChannelsID, channel);
+            createRecord(airtableTableID, slackObject);
         }
 	}
 	
