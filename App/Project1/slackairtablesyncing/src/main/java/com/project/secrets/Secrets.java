@@ -1,5 +1,8 @@
 package com.project.secrets;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Secrets {
 	// Credentials
 	private static final String SLACK_BOT_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
@@ -8,6 +11,9 @@ public class Secrets {
 	private static final String BASE_ID = "appNRtbTlWVuJ1lRQ";
 	private static final String TABLE_USERS_ID = "tblgH8hhOc3S6o3T5";
 	private static final String TABLE_CHANNELS_ID = "tbl5zr74HLsR1phRV";
+	private static final String SLACK_BOT_ID_1 = "USLACKBOT";
+	private static final String SLACK_BOT_ID_2 = "U058RB6J40M";
+	private static final String SLACK_BOT_ID_3 = "U05AY7JSXEW";	
 	
 	//Getters
 	public static String getSlackBotToken() {
@@ -28,4 +34,8 @@ public class Secrets {
 	public static String getTableChannelsID() {
 		return TABLE_CHANNELS_ID;
 	}
+	 public static List<String> getBotUserIDs() {
+	        return Arrays.asList(SLACK_BOT_ID_1, SLACK_BOT_ID_2, SLACK_BOT_ID_3);
+	    }
 }
+	
