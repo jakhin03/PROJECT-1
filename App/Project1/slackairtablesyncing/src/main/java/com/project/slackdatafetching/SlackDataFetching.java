@@ -197,19 +197,22 @@ public class SlackDataFetching {
     }
 
     public static List<UserData> extractUserData(List<User> users) {
+    	List<String> botUserIDs = Secrets.getBotUserIDs();
         List<UserData> userDataList = new ArrayList<>();
         for (User user : users) {
-            UserData userData = new UserData();
-            userData.setName(user.getName());
-            userData.setId(user.getId());
-            userData.setEmail(user.getProfile().getEmail());
-            userData.setDisplayName(user.getProfile().getDisplayName());
-            userData.setFullName(user.getProfile().getRealName());
-            userData.setStatus(user.getProfile().getStatusText());
-            userData.setRole(user.isOwner() ? "Owner" : "Member");
-            userData.setUserCreateDate(formatDate(user.getUpdated()));
-            userData.setStatusChangeDate(formatDate(user.getProfile().getStatusExpiration()));
-            userDataList.add(userData);
+        	if (!botUserIDs.contains(user.getId())) {
+        		UserData userData = new UserData();
+                userData.setName(user.getName());
+                userData.setId(user.getId());
+                userData.setEmail(user.getProfile().getEmail());
+                userData.setDisplayName(user.getProfile().getDisplayName());
+                userData.setFullName(user.getProfile().getRealName());
+                userData.setStatus(user.getProfile().getStatusText());
+                userData.setRole(user.isOwner() ? "Owner" : "Member");
+                userData.setUserCreateDate(formatDate(user.getUpdated()));
+                userData.setStatusChangeDate(formatDate(user.getProfile().getStatusExpiration()));
+                userDataList.add(userData);
+        	}
         }
         return userDataList;
     }
