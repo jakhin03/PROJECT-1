@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class Secrets {
 	// Credentials
-	private static final String CONFIG_FILE_PATH = "I:/HUST/Project1/Credentials/config.properties";
+	private static final String CONFIG_FILE_PATH = System.getProperty("user.dir") + "/../../../Credentials/config.properties";
     private static Properties properties;
 
     static {
@@ -18,7 +18,7 @@ public class Secrets {
             properties.load(inputStream);
             inputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+        	System.out.println("Authentication failed. Please check configuration file!");
         }
     }
 	

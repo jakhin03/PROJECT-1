@@ -8,6 +8,8 @@ import com.project.inviteusers.*;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,7 +89,8 @@ public class Main {
 			showMenu();
 			break;
 		case 1:
-			autoFetching("Manual syncing successful!");
+			LocalDateTime submittedTime = LocalDateTime.now();
+			autoFetching(submittedTime, "Manual sync");
 			System.out.println("Syncing data...");
 			System.out.println("Press Enter key to get back...");
 			System.in.read();
@@ -95,7 +98,7 @@ public class Main {
 			
 			break;
 		case 2:
-			taskScheduling();
+			taskScheduling("Schedule sync");
 			System.out.println("Press Enter key to get back...");
 			System.in.read();
 			showMenu();
@@ -107,26 +110,31 @@ public class Main {
 		}
 	}
 	
-	public static void taskScheduling(){
-		    @SuppressWarnings("resource")
-			Scanner scanner = new Scanner(System.in);
+	public static void taskScheduling(final String task) {
+		
+		
+	    @SuppressWarnings("resource")
+	    Scanner scanner = new Scanner(System.in);
 
-	        System.out.print("Enter hour (0-23): ");
-	        int hour = scanner.nextInt();
+	    System.out.print("Enter hour (0-23): ");
+	    int hour = scanner.nextInt();
 
-	        System.out.print("Enter minute (0-59): ");
-	        int minute = scanner.nextInt();
-	        
-	        System.out.printf("Data will be syncing at %d:%d\n", hour,minute);
+	    System.out.print("Enter minute (0-59): ");
+	    int minute = scanner.nextInt();
+	    
+	    final LocalDateTime submittedScheduleTime = LocalDateTime.now();
+	    
+	    System.out.printf("Data will be syncing at %d:%02d\n", hour, minute);
 
-	        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-	        scheduler.scheduleAtFixedRate(new Runnable() {
-	            @Override
-	            public void run() {
-	               autoFetching("Auto-scheduling syncing successful!");
-	            }
-	        }, getDelay(hour, minute), 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
-	    }
+	    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+	    scheduler.scheduleAtFixedRate(new Runnable() {
+	        @Override
+	        public void run() {
+	            autoFetching(submittedScheduleTime, task);
+	        }
+	    }, getDelay(hour, minute), 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
+	}
 
 	    private static long getDelay(int hour, int minute) {
 	        Calendar now = Calendar.getInstance();
@@ -144,16 +152,20 @@ public class Main {
 	}
 		
 	
-	public static void autoFetching(String description){
-		 Thread thread = new Thread(new Runnable() {
+	public static void autoFetching(final LocalDateTime submittedTime, final String task){
+		Thread thread = new Thread(new Runnable() {
              @Override
              public void run() {
+            	LocalDateTime startedTime = LocalDateTime.now();
+            	String status = "SUCCESS";
             	 try {
-         			SlackDataFetching.airtableFetching();
-         			AirTableAPI.createLogs(description);
+            		SlackDataFetching.airtableFetching();
          		}catch (IOException e) {
+         			status = "FAILED";
          			System.out.println("Network Error!");
          		}
+       			LocalDateTime finishedTime = LocalDateTime.now();
+       			AirTableAPI.createLogs(submittedTime, startedTime, finishedTime, status, task);
              }
          });
          thread.start();
