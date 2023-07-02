@@ -2,50 +2,57 @@ package com.project.secrets;
 
 import java.util.Arrays;
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class Secrets {
 	// Credentials
-	private static final String SLACK_BOT_TOKEN = "xoxb-5299649559379-5372256915506-LfjJ3tkaWbvOojjw9LPTEEsF";
-	private static final String SLACK_SIGNING_SECRET = "2186633bb97c9c62aeaaadcd3a7b610a";
-	private static final String API_KEY = "patAI3AeWkid1KoUX.76729d81c87bb327102a6667ce1fb87b0db5e26fa1436553ec56d8dfc0831c25";
-	private static final String BASE_ID = "appNRtbTlWVuJ1lRQ";
-	private static final String TABLE_USERS_ID = "tblgH8hhOc3S6o3T5";
-	private static final String TABLE_CHANNELS_ID = "tbl5zr74HLsR1phRV";
-	private static final String TABLE_LOGS_ID = "tblDtEEIA0xg7K7W3";
-	private static final String SLACK_BOT_ID_1 = "USLACKBOT";
-	private static final String SLACK_BOT_ID_2 = "U058RB6J40M";
-	private static final String SLACK_BOT_ID_3 = "U05AY7JSXEW";
+	private static final String CONFIG_FILE_PATH = "I:/HUST/Project1/Credentials/config.properties";
+    private static Properties properties;
 
-	// Getters
+    static {
+        properties = new Properties();
+        try {
+            FileInputStream inputStream = new FileInputStream(CONFIG_FILE_PATH);
+            properties.load(inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	//Getters
+  
 	public static String getSlackBotToken() {
-		return SLACK_BOT_TOKEN;
+		return properties.getProperty("slack.bottoken");
 	}
 
 	public static String getSlackSigning() {
-		return SLACK_SIGNING_SECRET;
+		return properties.getProperty("slack.signingsecret");
 	}
 
 	public static String getAPIKey() {
-		return API_KEY;
+		return properties.getProperty("api.key");
 	}
 
 	public static String getBaseID() {
-		return BASE_ID;
+		return properties.getProperty("base.id");
 	}
 
 	public static String getTableUsersID() {
-		return TABLE_USERS_ID;
+		return properties.getProperty("table.usersid");
 	}
 
 	public static String getTableChannelsID() {
-		return TABLE_CHANNELS_ID;
+		return properties.getProperty("table.channelsid");
 	}
-
 	public static List<String> getBotUserIDs() {
-		return Arrays.asList(SLACK_BOT_ID_1, SLACK_BOT_ID_2, SLACK_BOT_ID_3);
-	}
-
+	    String botIDsString = properties.getProperty("slack.botids");
+	    return Arrays.asList(botIDsString.split(","));
+	    }
 	public static String getTableLogsId() {
-		return TABLE_LOGS_ID;
+		return properties.getProperty("table.logsid");
 	}
+  
 }
