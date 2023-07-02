@@ -2,6 +2,8 @@ package com.project.airtableAPI;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,21 @@ public class AirTableAPI {
 	
 	static String apiKey = Secrets.getAPIKey();
 	static String baseID = Secrets.getBaseID();
+	
+	public static void createLogs(String description) {
+		LocalDateTime now = LocalDateTime.now();		//Get current timme
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		String formattedDateTime = now.format(formatter);
+		
+		JSONObject logsObject = new JSONObject();
+		logsObject.put("Time", formattedDateTime);
+		logsObject.put("Description", description);	
+		try {
+			createRecord(Secrets.getTableLogsId(), logsObject);
+		} catch (IOException e) {
+			System.out.println("Cant create logs!");
+		}
+	}
 
 	public static void checkDeletedRecord(String airtableTableID, JSONObject airtableRecordObject, JSONArray slackRecordArray) throws IOException {
 		boolean is_deleted = true;
