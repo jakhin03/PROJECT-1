@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -133,7 +132,7 @@ public class Main {
 	        public void run() {
 	            autoFetching(submittedScheduleTime, task);
 	        }
-	    }, getDelay(hour, minute), 24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
+	    }, getDelay(hour, minute), 24L * 60 * 60 * 1000, TimeUnit.MILLISECONDS);
 	}
 
 	    private static long getDelay(int hour, int minute) {
