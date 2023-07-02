@@ -23,21 +23,27 @@ public class Secrets {
     }
 	
 	//Getters
+  
 	public static String getSlackBotToken() {
 		return properties.getProperty("slack.bottoken");
 	}
+
 	public static String getSlackSigning() {
 		return properties.getProperty("slack.signingsecret");
 	}
+
 	public static String getAPIKey() {
 		return properties.getProperty("api.key");
 	}
+
 	public static String getBaseID() {
 		return properties.getProperty("base.id");
 	}
+
 	public static String getTableUsersID() {
 		return properties.getProperty("table.usersid");
 	}
+
 	public static String getTableChannelsID() {
 		return properties.getProperty("table.channelsid");
 	}
@@ -45,5 +51,8 @@ public class Secrets {
 	    String botIDsString = properties.getProperty("slack.botids");
 	    return Arrays.asList(botIDsString.split(","));
 	    }
+	public static String getTableLogsId() {
+		return properties.getProperty("table.logsid");
+	}
+  
 }
-	
