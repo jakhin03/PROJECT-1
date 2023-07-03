@@ -2,6 +2,7 @@ package com.project.airtableAPI;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -30,14 +31,20 @@ public class AirTableAPI {
 	static String apiKey = Secrets.getAPIKey();
 	static String baseID = Secrets.getBaseID();
 	
-	public static void createLogs(String description) {
-		LocalDateTime now = LocalDateTime.now();		//Get current timme
+	public static void createLogs(LocalDateTime submittedTime, LocalDateTime startedTime, LocalDateTime finishedTime, String status, String task) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		String formattedDateTime = now.format(formatter);
+		String formattedSubmittedTime= submittedTime.format(formatter);
+		String formattedStartedTime= startedTime.format(formatter);
+		String formattedFinishedTime= finishedTime.format(formatter);
+		Duration duration = Duration.between(startedTime, finishedTime);
 		
 		JSONObject logsObject = new JSONObject();
-		logsObject.put("Time", formattedDateTime);
-		logsObject.put("Description", description);	
+		logsObject.put("Status", status);
+		logsObject.put("Task", task);
+		logsObject.put("Submitted", formattedSubmittedTime);
+		logsObject.put("Started", formattedStartedTime);
+		logsObject.put("Finished", formattedFinishedTime);
+		logsObject.put("Duration", duration.getSeconds()+"s");
 		try {
 			createRecord(Secrets.getTableLogsId(), logsObject);
 		} catch (IOException e) {

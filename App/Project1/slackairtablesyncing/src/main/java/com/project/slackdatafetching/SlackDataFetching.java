@@ -53,25 +53,31 @@ public class SlackDataFetching {
         
         JSONArray airtableChannelArray = AirTableAPI.listRecords(Secrets.getTableChannelsID());  //get listChannels from Airtable
         JSONArray airtableUserArray = AirTableAPI.listRecords(Secrets.getTableUsersID());        //get listUsers from Airtable
-        //update users
-        	for (int i=0; i<slackUserArray.length(); i++) {
-            	JSONObject slackUserObject = slackUserArray.getJSONObject(i);
-    			AirTableAPI.createOrUpdateRecord(Secrets.getTableUsersID(),slackUserObject, airtableUserArray);
-        	}
-        	for (int i=0; i<airtableUserArray.length(); i++) {
-        		JSONObject airtableUserObject = airtableUserArray.getJSONObject(i);
-        		AirTableAPI.checkDeletedRecord(Secrets.getTableUsersID() ,airtableUserObject, slackUserArray);
-        	}
-        	
-        //update channels
-        	for (int j=0; j<slackChannelArray.length(); j++) {
-        		JSONObject slackChannelObject = slackChannelArray.getJSONObject(j);
-        		AirTableAPI.createOrUpdateRecord(Secrets.getTableChannelsID(),slackChannelObject, airtableChannelArray);
-        	}
-        	for (int j=0; j<airtableChannelArray.length(); j++) {
-        		JSONObject airtableChannelObject = airtableChannelArray.getJSONObject(j);
-        		AirTableAPI.checkDeletedRecord(Secrets.getTableChannelsID() ,airtableChannelObject, slackChannelArray);
-        	}
+        if (slackChannelArray != null && slackUserArray != null) {
+        	//update users
+            for (int i=0; i<slackUserArray.length(); i++) {
+                JSONObject slackUserObject = slackUserArray.getJSONObject(i);
+        		AirTableAPI.createOrUpdateRecord(Secrets.getTableUsersID(),slackUserObject, airtableUserArray);
+            }
+            for (int i=0; i<airtableUserArray.length(); i++) {
+            	JSONObject airtableUserObject = airtableUserArray.getJSONObject(i);
+            	AirTableAPI.checkDeletedRecord(Secrets.getTableUsersID() ,airtableUserObject, slackUserArray);
+            }
+            	
+            //update channels
+            for (int j=0; j<slackChannelArray.length(); j++) {
+            	JSONObject slackChannelObject = slackChannelArray.getJSONObject(j);
+            	AirTableAPI.createOrUpdateRecord(Secrets.getTableChannelsID(),slackChannelObject, airtableChannelArray);
+            }
+            for (int j=0; j<airtableChannelArray.length(); j++) {
+            	JSONObject airtableChannelObject = airtableChannelArray.getJSONObject(j);
+            	AirTableAPI.checkDeletedRecord(Secrets.getTableChannelsID() ,airtableChannelObject, slackChannelArray);
+            }
+        }else {
+        	throw new IOException("Network Error!");
+        }
+        
+        
 
     }
     
