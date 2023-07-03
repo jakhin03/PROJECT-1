@@ -1,18 +1,18 @@
 package com.project.main;
 
-import com.project.airtableAPI.AirTableAPI;
-import com.project.createchannels.CreateChannels;
-import com.project.slackdatafetching.*;
-import com.project.inviteusers.*;
-
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import com.project.airtableAPI.AirTableAPI;
+import com.project.slackdatafetching.SlackDataFetching;
+import com.project.slackmanagement.CreateChannels;
+import com.project.slackmanagement.InviteUsers;
 
 public class Main {
 
