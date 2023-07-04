@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.project.airtableAPI.AirTableAPI;
+import com.project.airtableapi.AirTableAPI;
 import com.project.slackdatafetching.SlackDataFetching;
 import com.project.slackmanagement.CreateChannels;
 import com.project.slackmanagement.InviteUsers;
