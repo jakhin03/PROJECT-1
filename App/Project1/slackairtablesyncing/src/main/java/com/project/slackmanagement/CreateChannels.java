@@ -1,4 +1,4 @@
-package com.project.createchannels;
+package com.project.slackmanagement;
 
 import com.project.secrets.Secrets;
 import com.slack.api.Slack;
