@@ -123,7 +123,8 @@ public class Main {
 	    
 	    final LocalDateTime submittedScheduleTime = LocalDateTime.now();
 	    
-	    System.out.printf("Data will be syncing at %d:%02d\n", hour, minute);
+	    System.out.printf("Data will be syncing at %d:%02d", hour, minute);
+	    System.lineSeparator(); 
 
 	    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
