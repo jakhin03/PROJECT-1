@@ -1,4 +1,4 @@
-package com.project.airtableAPI;
+package com.project.airtableapi;
 
 import java.io.IOException;
 import java.net.URI;

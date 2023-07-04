@@ -1,7 +1,7 @@
 package com.project.slackdatafetching;
 
 import com.google.gson.GsonBuilder;
-import com.project.airtableAPI.AirTableAPI;
+import com.project.airtableapi.AirTableAPI;
 import com.project.secrets.Secrets;
 import com.google.gson.Gson;
 import com.slack.api.Slack;
