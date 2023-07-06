@@ -5,20 +5,21 @@
 	* Using [JAVA](https://en.wikipedia.org/wiki/Java_(programming_language)) language
 	* Exploring Slack, AirTable and its API
 	* Accessing integrate Slack User and Slack Channel to AirTable
-	* Document: [slack API](https://api.slack.com/methods)
+	* Document: [slack API](https://api.slack.com/methods), [Airtable API](https://airtable.com/developers/web/api/)
 
 
 ## Project planing: [details](./Figure/Project%20plan%20Topic%207%20-%20Group%2012.pdf)
-* Design program:
-	* Flow chart: [Flow chart](./Figure/flow_chart.png)
-	* Use case: [Use case diagram](./Figure/use_case.png)
-	* Modeling: [Entity - Relationship Model](./Figure/model.png)
+* Diagrams:
+	* Usecase diagram: [Usecase diagram](./App/Requirement/UseCase%20Diagram.png)
+	* Class diagram: [Class diagram](./App/Design/Class%20Diagram.png)
+	* Activity diagram: [Activity diagram](./App/Design/Activity%20Diagram.png)
 
-## Usage:
-* Setup environments:
+
+## Setup environments:
+* Settings: Can using default [pom.xml](./App/SlackAirtableSyncing/pom.xml) file
 	* GroupId: ```com.project```
 	* ArtifactId: ```slackairtablesyncing```
-	* Dependencies:
+	* Dependencies: 
 ```
 	<dependency>
 		<groupId>junit</groupId>
@@ -54,3 +55,19 @@
 		<version>20230227</version>
 	</dependency>
 ```
+* Airtable database:
+	* Create table Channels:
+		* Fields: 
+	* Create table Users:
+		* Fields: 
+
+
+## Usage:
+* Configuration:
+	* All credentials and token are required in [config](./Credentials/config.properties) file
+* Compiler:
+	* Recommended compiler: [Eclipse IDE](https://download.eclipse.org/) and [Intellij IDEA](https://www.jetbrains.com/idea/download/)
+* Run configuration:
+	* Project folder: [SlackAirtableSyncing](./App/SlackAirtableSyncing/)
+	* Source folder: [src](./App/SlackAirtableSyncing/src/)
+	* Main class: com.project.main.Main
