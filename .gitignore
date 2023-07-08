@@ -9,3 +9,5 @@ App/SlackAirtableSyncing/bin/
 App/SlackAirtableSyncing/target/
 App/SlackAirtableSyncing/.classpath
 App/SlackAirtableSyncing/.project
+*.lock
+App/Project1/.metadata/
