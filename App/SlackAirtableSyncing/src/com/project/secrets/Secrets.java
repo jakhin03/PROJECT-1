@@ -8,7 +8,8 @@ import java.util.Properties;
 
 public class Secrets {
 	// Credentials
-	private static final String CONFIG_FILE_PATH = System.getProperty("user.dir") + "/../../../Credentials/config.properties";
+	private static final String CONFIG_FILE_PATH = "Credentials/config.properties";
+	
     private static Properties properties;
 
     static {

@@ -64,7 +64,7 @@
 
 ## Usage:
 * Configuration:
-	* All credentials and token are required in [config](./Credentials/config.properties) file
+	* All credentials and token are required in [config](./App/SlackAirtableSyncing/Credentials/config.properties) file
 * Compiler:
 	* Recommended compiler: [Eclipse IDE](https://download.eclipse.org/) and [Intellij IDEA](https://www.jetbrains.com/idea/download/)
 * Run configuration:
