@@ -4,6 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class JsonUtils {
+	
+	private JsonUtils() {
+		throw new IllegalStateException(" Utility class");
+	}
+	
     public static String findIdInAirtableJsonArray(String id, JSONArray jsonArray) {
     	for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -11,8 +16,7 @@ public class JsonUtils {
             if (jsonObject.has("fields")) {
                 JSONObject fieldsObject = jsonObject.getJSONObject("fields");
                 if (fieldsObject.has("id") && fieldsObject.getString("id").equals(id)) {
-                	String recordId = jsonObject.getString("id");
-                    return recordId;
+                	return jsonObject.getString("id");
                 }
             }
         }

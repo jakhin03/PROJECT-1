@@ -53,7 +53,7 @@ public class SlackDataFetching {
         
         JSONArray airtableChannelArray = AirTableAPI.listRecords(Secrets.getTableChannelsID());  //get listChannels from Airtable
         JSONArray airtableUserArray = AirTableAPI.listRecords(Secrets.getTableUsersID());        //get listUsers from Airtable
-        if (slackChannelArray != null && slackUserArray != null) {
+        if (slackChannelArray != null) {
         	//update users
             for (int i=0; i<slackUserArray.length(); i++) {
                 JSONObject slackUserObject = slackUserArray.getJSONObject(i);
@@ -89,7 +89,7 @@ public class SlackDataFetching {
         if (channels != null) {
             String channelsString = convertToString(extractChannelData(channels));
             JSONArray channelsJSON = new JSONArray(channelsString);
-            System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s\n",
+            System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s%n",
                     "Name", "ID", "Creator", "Create Date", "Privacy", "Status","Topic", "Description");
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
