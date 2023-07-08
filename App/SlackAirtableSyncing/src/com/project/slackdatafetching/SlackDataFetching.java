@@ -27,6 +27,10 @@ import java.util.Date;
 import java.util.List;
 
 public class SlackDataFetching {
+	
+	private SlackDataFetching() {
+		throw new IllegalStateException(" Utility class");
+	}
     // Slack API credentials
 	
 	static String slackToken = Secrets.getSlackBotToken();
@@ -53,7 +57,7 @@ public class SlackDataFetching {
         
         JSONArray airtableChannelArray = AirTableAPI.listRecords(Secrets.getTableChannelsID());  //get listChannels from Airtable
         JSONArray airtableUserArray = AirTableAPI.listRecords(Secrets.getTableUsersID());        //get listUsers from Airtable
-        if (slackChannelArray != null && slackUserArray != null) {
+        if (slackChannelArray != null) {
         	//update users
             for (int i=0; i<slackUserArray.length(); i++) {
                 JSONObject slackUserObject = slackUserArray.getJSONObject(i);
@@ -89,7 +93,7 @@ public class SlackDataFetching {
         if (channels != null) {
             String channelsString = convertToString(extractChannelData(channels));
             JSONArray channelsJSON = new JSONArray(channelsString);
-            System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s\n",
+            System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s%n",
                     "Name", "ID", "Creator", "Create Date", "Privacy", "Status","Topic", "Description");
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
@@ -99,18 +103,18 @@ public class SlackDataFetching {
                 String name = channel.optString("name", "");
                 String id = channel.optString("id", "");
                 String topic = channel.optString("topic", "");
-                if (topic.length() > 25) { // litmit maximum length of characters
+                if (topic.length() > 25) { // limit maximum length of characters
                     topic = topic.substring(0, 25) + "...";
                 }
                 String description = channel.optString("description", "");
-                if (description.length() > 50) { // litmit maximum length of characters
+                if (description.length() > 50) { // limit maximum length of characters
                     description = description.substring(0, 50) + "...";
                 }
                 String creator = channel.optString("creator", "");
                 String createDate = channel.optString("createDate", "");
                 String privacy = channel.optString("privacy", "");
                 String status = channel.optString("status", "");
-                System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s\n",
+                System.out.format("%-30s %-20s %-20s %-20s %-10s %-10s %-30s %-50s%n",
                         name, id, creator, createDate, privacy, status,topic, description);
             }
         }
@@ -124,7 +128,7 @@ public class SlackDataFetching {
         if (users != null) {
             String usersString = convertToString(extractUserData(users));
             JSONArray usersJSON = new JSONArray(usersString);
-            System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s\n",
+            System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s%n",
                     "Name", "ID", "Email", "Display Name", "Full Name", "Status", "Role",
                     "User Create Date", "Status Change Date");
             System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -139,7 +143,7 @@ public class SlackDataFetching {
                 String role = user.optString("role", "");
                 String userCreateDate = user.optString("userCreateDate", "");
                 String statusChangeDate = user.optString("statusChangeDate", "");
-                System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s\n",
+                System.out.format("%-20s %-20s %-30s %-20s %-20s %-10s %-10s %-20s %-20s%n",
                         name, id, email, displayName, fullName, status, role,
                         userCreateDate, statusChangeDate);
             }

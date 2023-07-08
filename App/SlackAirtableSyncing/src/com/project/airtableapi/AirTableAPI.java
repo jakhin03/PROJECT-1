@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,8 +30,15 @@ import com.project.secrets.Secrets;
 
 public class AirTableAPI {
 	
+	private static final Logger logger = Logger.getLogger(AirTableAPI.class.getName());
+	
+	private static final String AIRTABLE_API_URL = "https://api.airtable.com/v0/";
 	static String apiKey = Secrets.getAPIKey();
 	static String baseID = Secrets.getBaseID();
+	
+	private AirTableAPI() {
+		throw new IllegalStateException(" Utility class");
+	}
 	
 	public static void createLogs(LocalDateTime submittedTime, LocalDateTime startedTime, LocalDateTime finishedTime, String status, String task) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -48,21 +57,21 @@ public class AirTableAPI {
 		try {
 			createRecord(Secrets.getTableLogsId(), logsObject);
 		} catch (IOException e) {
-			System.out.println("Cant create logs!");
+			logger.severe("Cant create logs!");
 		}
 	}
 
 	public static void checkDeletedRecord(String airtableTableID, JSONObject airtableRecordObject, JSONArray slackRecordArray) throws IOException {
-		boolean is_deleted = true;
+		boolean isDeleted = true;
 		String airtableRecordId = airtableRecordObject.getString("id");   //AirTable users
 		JSONObject existingRecordObject = airtableRecordObject.getJSONObject("fields");
 		String existingRecordId = existingRecordObject.getString("id");
-        String is_existed = JsonUtils.findIdInSlackJsonArray(existingRecordId, slackRecordArray); //check if user_id slack in airtable
-        if (is_existed != null) {
-            is_deleted = false;
+        String isExisted = JsonUtils.findIdInSlackJsonArray(existingRecordId, slackRecordArray); //check if user_id slack in airtable
+        if (isExisted != null) {
+            isDeleted = false;
         }
-        if (is_deleted==true) {
-        	JSONObject deletedSlackRecordrObject = existingRecordObject.put("is_deleted", "1");
+        if (isDeleted) {
+        	JSONObject deletedSlackRecordrObject = existingRecordObject.put("isDeleted", "1");
         	updateRecord(airtableTableID, airtableRecordId, deletedSlackRecordrObject);
         }
 	}
@@ -78,107 +87,111 @@ public class AirTableAPI {
 	}
 	
 	public static JSONObject createRecord(String tableName, JSONObject fields) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseID + "/" + tableName;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost(url);
-		
-		httpPost.setHeader("Authorization", "Bearer " + apiKey);
-		httpPost.setHeader("Content-Type", "application/json");
-		httpPost.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
-		
-		JSONObject body = new JSONObject();
-		body.put("fields", fields);
-		
-		StringEntity entity = new StringEntity(body.toString());
-		httpPost.setEntity(entity);
-		
-		HttpResponse response = httpClient.execute(httpPost);
-		HttpEntity responseEntity = response.getEntity();
-		String responseString = EntityUtils.toString(responseEntity, "UTF-8");
-		
-		JSONObject jsonResponse = new JSONObject(responseString);
-		return jsonResponse;
-	}
-	
-	public static JSONObject retrieveRecord(String tableName, String recordId) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseID + "/" + tableName + "/" + recordId;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet(url);
-		
-		httpGet.setHeader("Authorization", "Bearer " + apiKey);
-		httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
-		
-		HttpResponse response = httpClient.execute(httpGet);
-		HttpEntity responseEntity = response.getEntity();
-		String responseString = EntityUtils.toString(responseEntity, "UTF-8");
-		
-		JSONObject jsonResponse = new JSONObject(responseString);
-		return jsonResponse;
-	}
-	
-	public static JSONObject updateRecord(String tableName, String recordId, JSONObject fields) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseID + "/" + tableName + "/" + recordId;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpPatch httpPatch = new HttpPatch(url);
-		
-		httpPatch.setHeader("Authorization", "Bearer " + apiKey);
-		httpPatch.setHeader("Content-Type", "application/json");
-		httpPatch.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
-		
-		JSONObject body = new JSONObject();
-		body.put("fields", fields);
-		
-		StringEntity entity = new StringEntity(body.toString());
-		httpPatch.setEntity(entity);
-		
-		HttpResponse response = httpClient.execute(httpPatch);
-		HttpEntity responseEntity = response.getEntity();
-		String responseString = EntityUtils.toString(responseEntity, "UTF-8");
-		
-		JSONObject jsonResponse = new JSONObject(responseString);
-		return jsonResponse;
-	}
-	
-	public static void deleteRecord(String tableName, String recordId) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseID + "/" + tableName + "/" + recordId;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpDelete httpDelete = new HttpDelete(url);
-		
-		httpDelete.setHeader("Authorization", "Bearer " + apiKey);
-		httpDelete.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
-		
-		httpClient.execute(httpDelete);
-	}
-	
-	public static JSONArray listRecords(String tableName) throws IOException {
-		String url = "https://api.airtable.com/v0/" + baseID + "/" + tableName;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet(url);
-		
-		httpGet.setHeader("Authorization", "Bearer " + apiKey);
-		httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
-		
-		List<JSONObject> records = new ArrayList<JSONObject>();
-		String offset = null;
-		do {
-			if (offset != null) {
-				httpGet.setURI(URI.create(url + "?offset=" + offset));
-			}
-			HttpResponse response = httpClient.execute(httpGet);
+		String url = AIRTABLE_API_URL + baseID + "/" + tableName;
+		try( CloseableHttpClient httpClient = HttpClients.createDefault()){
+			HttpPost httpPost = new HttpPost(url);
+			
+			httpPost.setHeader("Authorization", "Bearer " + apiKey);
+			httpPost.setHeader("Content-Type", "application/json");
+			httpPost.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
+			
+			JSONObject body = new JSONObject();
+			body.put("fields", fields);
+			
+			StringEntity entity = new StringEntity(body.toString());
+			httpPost.setEntity(entity);
+			
+			HttpResponse response = httpClient.execute(httpPost);
 			HttpEntity responseEntity = response.getEntity();
 			String responseString = EntityUtils.toString(responseEntity, "UTF-8");
 			
-			JSONObject jsonResponse = new JSONObject(responseString);
-			JSONArray recordsArray = jsonResponse.getJSONArray("records");
-			for (int i = 0; i < recordsArray.length(); i++) {
-				JSONObject record = recordsArray.getJSONObject(i);
-				records.add(record);
-			}
-			offset = jsonResponse.optString("offset", null);
-		} while (offset != null);
-		
-		JSONArray result = new JSONArray(records);
-		return result;
+			return new JSONObject(responseString);
+		}
 	}
+	
+	public static JSONObject retrieveRecord(String tableName, String recordId) throws IOException {
+	    String url = AIRTABLE_API_URL + baseID + "/" + tableName + "/" + recordId;
+	    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+	        HttpGet httpGet = new HttpGet(url);
+
+	        httpGet.setHeader("Authorization", "Bearer " + apiKey);
+	        httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
+
+	        HttpResponse response = httpClient.execute(httpGet);
+	        HttpEntity responseEntity = response.getEntity();
+	        String responseString = EntityUtils.toString(responseEntity, "UTF-8");
+
+	        return new JSONObject(responseString);
+	    }
+	}
+	
+	public static JSONObject updateRecord(String tableName, String recordId, JSONObject fields) throws IOException {
+		String url = AIRTABLE_API_URL + baseID + "/" + tableName + "/" + recordId;
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpPatch httpPatch = new HttpPatch(url);
+			
+			httpPatch.setHeader("Authorization", "Bearer " + apiKey);
+			httpPatch.setHeader("Content-Type", "application/json");
+			httpPatch.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
+			
+			JSONObject body = new JSONObject();
+			body.put("fields", fields);
+			
+			StringEntity entity = new StringEntity(body.toString());
+			httpPatch.setEntity(entity);
+			
+			HttpResponse response = httpClient.execute(httpPatch);
+			HttpEntity responseEntity = response.getEntity();
+			String responseString = EntityUtils.toString(responseEntity, "UTF-8");
+			
+			return new JSONObject(responseString);
+		}
+	}
+	
+	public static void deleteRecord(String tableName, String recordId) throws IOException {
+		String url = AIRTABLE_API_URL + baseID + "/" + tableName + "/" + recordId;
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpDelete httpDelete = new HttpDelete(url);
+			
+			httpDelete.setHeader("Authorization", "Bearer " + apiKey);
+			httpDelete.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
+			
+			httpClient.execute(httpDelete);
+		}
+	}
+	
+	public static JSONArray listRecords(String tableName) throws IOException {
+	    String url = AIRTABLE_API_URL + baseID + "/" + tableName;
+	    List<JSONObject> records = new ArrayList<>();
+	    String offset = null;
+
+	    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+	        do {
+	            HttpGet httpGet = new HttpGet(url);
+
+	            httpGet.setHeader("Authorization", "Bearer " + apiKey);
+	            httpGet.setConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
+
+	            if (offset != null) {
+	                httpGet.setURI(URI.create(url + "?offset=" + offset));
+	            }
+
+	            HttpResponse response = httpClient.execute(httpGet);
+	            HttpEntity responseEntity = response.getEntity();
+	            String responseString = EntityUtils.toString(responseEntity, "UTF-8");
+
+	            JSONObject jsonResponse = new JSONObject(responseString);
+	            JSONArray recordsArray = jsonResponse.getJSONArray("records");
+	            for (int i = 0; i < recordsArray.length(); i++) {
+	                JSONObject myRecord = recordsArray.getJSONObject(i);
+	                records.add(myRecord);
+	            }
+	            offset = jsonResponse.optString("offset", null);
+	        } while (offset != null);
+	    }
+
+	    return new JSONArray(records);
+	}
+
 
 }
