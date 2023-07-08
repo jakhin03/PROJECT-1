@@ -191,8 +191,8 @@ public class SlackDataFetching {
         return null;
     }
     
-    public static Map<String, List<User>> fetchChannelsWithUsers() {
-        Map<String, List<User>> channelUsersMap = new HashMap<>();
+    public static JSONObject fetchChannelsWithUsers() {
+        JSONObject channelUsersJson = new JSONObject();
         Slack slack = Slack.getInstance();
         List<Conversation> channels = new ArrayList<>();
 
@@ -204,16 +204,17 @@ public class SlackDataFetching {
                 channels = conversationsListResponse.getChannels();
             } else {
                 System.out.println("Failed to fetch conversations: " + conversationsListResponse.getError());
-                return channelUsersMap;
+                return channelUsersJson;
             }
         } catch (IOException | SlackApiException e) {
             System.out.println("Error occurred while fetching conversations: " + e.getMessage());
-            return channelUsersMap;
+            return channelUsersJson;
         }
 
         for (Conversation channel : channels) {
             String channelId = channel.getId();
-            List<User> users = new ArrayList<>();
+            String channelName = channel.getName();
+            Map<String, String> userMap = new HashMap<>();
 
             try {
                 ConversationsMembersResponse membersResponse = slack.methods(slackToken).conversationsMembers(
@@ -228,18 +229,21 @@ public class SlackDataFetching {
 
                         if (userInfoResponse.isOk()) {
                             User user = userInfoResponse.getUser();
-                            users.add(user);
+                            userMap.put(user.getId(), user.getName());
                         }
                     }
                 } else {
-                    System.out.println("Failed to fetch members for channel " + channel.getName() + ". Error: " + membersResponse.getError());
+                    System.out.println("Failed to fetch members for channel " + channelName + ". Error: " + membersResponse.getError());
                 }
             } catch (IOException | SlackApiException e) {
-                System.out.println("Error occurred while fetching members for channel " + channel.getName() + ": " + e.getMessage());
+                System.out.println("Error occurred while fetching members for channel " + channelName + ": " + e.getMessage());
             }
-            channelUsersMap.put(channelId, users);
+
+            JSONArray userArray = new JSONArray(userMap.entrySet());
+            channelUsersJson.put(channelName, userArray);
         }
-        return channelUsersMap;
+
+        return channelUsersJson;
     }
 
     public static List<ChannelData> extractChannelData(List<Conversation> channels) {
