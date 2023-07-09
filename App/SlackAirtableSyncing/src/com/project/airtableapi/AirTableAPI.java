@@ -80,7 +80,8 @@ public class AirTableAPI {
         String slackObjectId = slackObject.getString("id");
         String existingRecordId = JsonUtils.findIdInAirtableJsonArray(slackObjectId, airtableArray);
         if (existingRecordId != null) {
-            updateRecord(airtableTableID, existingRecordId, slackObject);
+            JSONObject abc = updateRecord(airtableTableID, existingRecordId, slackObject);
+            System.out.println(abc.toString());
         } else {
             createRecord(airtableTableID, slackObject);
         }
