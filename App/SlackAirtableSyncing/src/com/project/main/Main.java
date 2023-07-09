@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,6 +18,7 @@ import com.project.slackmanagement.InviteUsers;
 public class Main {
 
 	private static Scanner sc = new Scanner(System.in);
+	private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
 	public static void main(String[] args) throws Exception {
 		//autoFetching();
@@ -110,8 +112,6 @@ public class Main {
 	}
 	
 	public static void taskScheduling(final String task) {
-		
-		
 	    @SuppressWarnings("resource")
 	    Scanner scanner = new Scanner(System.in);
 
@@ -123,10 +123,9 @@ public class Main {
 	    
 	    final LocalDateTime submittedScheduleTime = LocalDateTime.now();
 	    
-	    System.out.printf("Data will be syncing at %d:%02d", hour, minute);
-	    System.lineSeparator(); 
+	    System.out.printf("Data will be syncing at %d:%02d\n", hour, minute);
 
-	    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	    
 
 	    scheduler.scheduleAtFixedRate(new Runnable() {
 	        @Override
@@ -137,18 +136,26 @@ public class Main {
 	}
 
 	    private static long getDelay(int hour, int minute) {
-	        Calendar now = Calendar.getInstance();
-	        Calendar scheduledTime = Calendar.getInstance();
-	        scheduledTime.set(Calendar.HOUR_OF_DAY, hour);
-	        scheduledTime.set(Calendar.MINUTE, minute);
-	        scheduledTime.set(Calendar.SECOND, 0);
-	        scheduledTime.set(Calendar.MILLISECOND, 0);
+//	        Calendar now = Calendar.getInstance();
+//	        Calendar scheduledTime = Calendar.getInstance();
+//	        scheduledTime.set(Calendar.HOUR_OF_DAY, hour);
+//	        scheduledTime.set(Calendar.MINUTE, minute);
+//	        scheduledTime.set(Calendar.SECOND, 0);
+//	        scheduledTime.set(Calendar.MILLISECOND, 0);
+//
+//	        if (scheduledTime.before(now)) {
+//	            scheduledTime.add(Calendar.DAY_OF_MONTH, 1);
+//	        }
+//
+//	        return scheduledTime.getTimeInMillis() - now.getTimeInMillis();
+	        LocalDateTime now = LocalDateTime.now();
+	        LocalDateTime nextRun = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), hour, minute);
 
-	        if (scheduledTime.before(now)) {
-	            scheduledTime.add(Calendar.DAY_OF_MONTH, 1);
+	        if (now.compareTo(nextRun) > 0) {
+	            nextRun = nextRun.plusDays(1);
 	        }
 
-	        return scheduledTime.getTimeInMillis() - now.getTimeInMillis();
+	        return ChronoUnit.MILLIS.between(now, nextRun);
 	}
 		
 	

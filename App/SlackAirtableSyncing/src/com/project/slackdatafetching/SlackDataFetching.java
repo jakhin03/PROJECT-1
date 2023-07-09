@@ -46,10 +46,13 @@ public class SlackDataFetching {
         List<Conversation> slackChannels = fetchChannels(methods);
         String slackChannelsString = null;
         JSONArray slackChannelArray = null;
+        JSONArray linkUsersToChannel = new JSONArray();
         if (slackChannels != null) {
             slackChannelsString = convertToString(extractChannelData(slackChannels));
             slackChannelArray = new JSONArray(slackChannelsString);
         }
+        
+        
         //get listUsers
         List<User> slackUsers = fetchUsers(methods);
         String slackUsersString = "";
@@ -71,10 +74,14 @@ public class SlackDataFetching {
             	JSONObject airtableUserObject = airtableUserArray.getJSONObject(i);
             	AirTableAPI.checkDeletedRecord(Secrets.getTableUsersID() ,airtableUserObject, slackUserArray);
             }
-            	
+            
+            
             //update channels
             for (int j=0; j<slackChannelArray.length(); j++) {
             	JSONObject slackChannelObject = slackChannelArray.getJSONObject(j);
+            	
+            	
+            	
             	AirTableAPI.createOrUpdateRecord(Secrets.getTableChannelsID(),slackChannelObject, airtableChannelArray);
             }
             for (int j=0; j<airtableChannelArray.length(); j++) {
@@ -84,8 +91,6 @@ public class SlackDataFetching {
         }else {
         	throw new IOException("Network Error!");
         }
-        
-        
 
     }
     
