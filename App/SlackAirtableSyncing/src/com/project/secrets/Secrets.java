@@ -48,10 +48,6 @@ public class Secrets {
 	public static String getTableChannelsID() {
 		return properties.getProperty("table.channelsid");
 	}
-	public static List<String> getBotUserIDs() {
-	    String botIDsString = properties.getProperty("slack.botids");
-	    return Arrays.asList(botIDsString.split(","));
-	    }
 	public static String getTableLogsId() {
 		return properties.getProperty("table.logsid");
 	}
