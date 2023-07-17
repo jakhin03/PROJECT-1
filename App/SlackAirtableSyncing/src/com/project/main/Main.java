@@ -52,32 +52,34 @@ public class Main {
 				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
 				+ "0. Exit\n\n" + "Enter your choice (0-5): ";
 		System.out.print(menu);
-		int option = sc.nextInt();
-		
-		switch (option) {
-		case 0:
-			System.out.println("Program ended!");
-			break;
-		case 1:
-			showChannels();
-			break;
-		case 2:
-			showUsers();
-			break;
-		case 3:
-			createChannel();
-			break;
-    	case 4:
-			inviteUser();
-			break;
-		case 5:
-			showMenuFetching();
-			break;
-		default:
+		try {
+			int option = sc.nextInt();
+			switch (option) {
+			case 0:
+				System.out.println("Program ended!");
+				break;
+			case 1:
+				showChannels();
+				break;
+			case 2:
+				showUsers();
+				break;
+			case 3:
+				createChannel();
+				break;
+	    	case 4:
+				inviteUser();
+				break;
+			case 5:
+				showMenuFetching();
+				break;
+			default:
+				System.out.println("Invalid input!");
+				break;
+			}
+		}catch (Exception e) {
 			System.out.println("Invalid input!");
-			showMenu();
-			break;
-		}
+		}		
 	}
 
 	public static void showMenuFetching() throws IOException{
@@ -117,9 +119,17 @@ public class Main {
 
 	    System.out.print("Enter hour (0-23): ");
 	    int hour = scanner.nextInt();
+	    if (hour > 23 || hour < 0) {
+	    	System.out.println("Invalid value for hour!");
+	    	taskScheduling("Schedule sync");
+	    }
 
 	    System.out.print("Enter minute (0-59): ");
 	    int minute = scanner.nextInt();
+	    if (minute > 59 || minute < 0) {
+	    	System.out.println("Invalid value for minute!");
+	    	taskScheduling("Schedule sync");
+	    }
 	    
 	    final LocalDateTime submittedScheduleTime = LocalDateTime.now();
 	    
@@ -136,18 +146,6 @@ public class Main {
 	}
 
 	    private static long getDelay(int hour, int minute) {
-//	        Calendar now = Calendar.getInstance();
-//	        Calendar scheduledTime = Calendar.getInstance();
-//	        scheduledTime.set(Calendar.HOUR_OF_DAY, hour);
-//	        scheduledTime.set(Calendar.MINUTE, minute);
-//	        scheduledTime.set(Calendar.SECOND, 0);
-//	        scheduledTime.set(Calendar.MILLISECOND, 0);
-//
-//	        if (scheduledTime.before(now)) {
-//	            scheduledTime.add(Calendar.DAY_OF_MONTH, 1);
-//	        }
-//
-//	        return scheduledTime.getTimeInMillis() - now.getTimeInMillis();
 	        LocalDateTime now = LocalDateTime.now();
 	        LocalDateTime nextRun = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), hour, minute);
 
