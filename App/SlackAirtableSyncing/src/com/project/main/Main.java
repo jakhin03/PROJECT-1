@@ -48,39 +48,46 @@ public class Main {
 	}
 
 	public static void showMenu() throws IOException {
-		String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
-				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
-				+ "0. Exit\n\n" + "Enter your choice (0-5): ";
-		System.out.print(menu);
-		try {
-			int option = sc.nextInt();
-			switch (option) {
-			case 0:
-				System.out.println("Program ended!");
-				break;
-			case 1:
-				showChannels();
-				break;
-			case 2:
-				showUsers();
-				break;
-			case 3:
-				createChannel();
-				break;
-	    	case 4:
-				inviteUser();
-				break;
-			case 5:
-				showMenuFetching();
-				break;
-			default:
-				System.out.println("Invalid input!");
-				break;
-			}
-		}catch (Exception e) {
-			System.out.println("Invalid input!");
-		}		
+	    String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
+	            + "2. Show Slack user's information\n" + "3. Create a channels\n"
+	            + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
+	            + "0. Exit\n\n" + "Enter your choice (0-5): ";
+
+	    System.out.print(menu);
+
+	    try {
+	        int option = sc.nextInt();
+	        switch (option) {
+	            case 0:
+	                System.out.println("Program ended!");
+	                break;
+	            case 1:
+	                showChannels();
+	                break;
+	            case 2:
+	                showUsers();
+	                break;
+	            case 3:
+	                createChannel();
+	                break;
+	            case 4:
+	                inviteUser();
+	                break;
+	            case 5:
+	                showMenuFetching();
+	                break;
+	            default:
+	                System.out.println("Invalid input! Please enter a valid option (0-5).");
+	                showMenu();
+	                break;
+	        }
+	    } catch (InputMismatchException e) {
+	        System.out.println("Invalid input! Please enter a valid option (0-5).");
+	        sc.next();
+	        showMenu();
+	    }
 	}
+
 
 	public static void showMenuFetching() throws IOException{
 		String menu = "\nPlease select an option:\n\n" + "1. Fetch data from Slack to AirTable\n" + "2. Schedule fetching task";
