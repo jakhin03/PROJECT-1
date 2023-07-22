@@ -200,32 +200,31 @@ public class Main {
 	public static void createChannel() throws IOException {
 	    // create channel bang slack API
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	    System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\nEnter channel's name:\n");
+	    System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\n");
+	    System.out.print("Enter channel's name: ");
 	    String channelName;
+
 	    try {
-	        channelName = reader.readLine();
-	        if (channelName.trim().isEmpty()) {
-	            System.out.println("Channel name cannot be empty.");
-	            System.out.println("Press Enter to get back...");
-	            System.in.read();
-	            showMenu();
+	        channelName = reader.readLine().trim();
+
+	        if (channelName.isEmpty() || channelName.length() > 21 || !isValidChannelName(channelName)) {
+	            System.out.println("Invalid channel name! Please enter a valid name.");
+	            createChannel();
 	            return;
 	        }
-	        // Replace whitespace with hyphens
-	        channelName = channelName.replaceAll("\\s", "-");
 
-	        System.out.print("Enter '0' for private channel or '1' for public channel:\n");
+	        System.out.print("Enter '0' for private channel or '1' for public channel: ");
 	        String channelType = reader.readLine();
 	        boolean isPrivate = false;
 
 	        while (!channelType.equals("0") && !channelType.equals("1")) {
-	            System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
+	            System.out.print("Invalid input! Please enter '0' for private channel or '1' for public channel: ");
 	            channelType = reader.readLine();
 	        }
 
 	        isPrivate = channelType.equals("0");
 
-	        System.out.print("Enter channel' description (optional):\n");
+	        System.out.print("Enter channel' description (optional): ");
 	        String description = reader.readLine();
 	        CreateChannels.createChannel(channelName, description, isPrivate);
 	    } catch (IOException e) {
@@ -235,6 +234,12 @@ public class Main {
 	    System.out.println("Press Enter key to get back...");
 	    System.in.read();
 	    showMenu();
+	}
+
+	public static boolean isValidChannelName(String name) {
+	    // Regex pattern to check if the name contains only lowercase letters, non-Latin characters, numbers, and hyphens.
+	    String regex = "^[a-z0-9\\p{L} -]+$";
+	    return name.matches(regex);
 	}
 
 
