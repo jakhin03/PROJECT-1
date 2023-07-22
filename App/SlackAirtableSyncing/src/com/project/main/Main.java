@@ -48,39 +48,46 @@ public class Main {
 	}
 
 	public static void showMenu() throws IOException {
-		String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
-				+ "2. Show Slack user's information\n" + "3. Create a channels\n" + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
-				+ "0. Exit\n\n" + "Enter your choice (0-5): ";
-		System.out.print(menu);
-		try {
-			int option = sc.nextInt();
-			switch (option) {
-			case 0:
-				System.out.println("Program ended!");
-				break;
-			case 1:
-				showChannels();
-				break;
-			case 2:
-				showUsers();
-				break;
-			case 3:
-				createChannel();
-				break;
-	    	case 4:
-				inviteUser();
-				break;
-			case 5:
-				showMenuFetching();
-				break;
-			default:
-				System.out.println("Invalid input!");
-				break;
-			}
-		}catch (Exception e) {
-			System.out.println("Invalid input!");
-		}		
+	    String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
+	            + "2. Show Slack user's information\n" + "3. Create a channels\n"
+	            + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
+	            + "0. Exit\n\n" + "Enter your choice (0-5): ";
+
+	    System.out.print(menu);
+
+	    try {
+	        int option = sc.nextInt();
+	        switch (option) {
+	            case 0:
+	                System.out.println("Program ended!");
+	                break;
+	            case 1:
+	                showChannels();
+	                break;
+	            case 2:
+	                showUsers();
+	                break;
+	            case 3:
+	                createChannel();
+	                break;
+	            case 4:
+	                inviteUser();
+	                break;
+	            case 5:
+	                showMenuFetching();
+	                break;
+	            default:
+	                System.out.println("Invalid input! Please enter a valid option (0-5).");
+	                showMenu();
+	                break;
+	        }
+	    } catch (InputMismatchException e) {
+	        System.out.println("Invalid input! Please enter a valid option (0-5).");
+	        sc.next();
+	        showMenu();
+	    }
 	}
+
 
 	public static void showMenuFetching() throws IOException{
 		String menu = "\nPlease select an option:\n\n" + "1. Fetch data from Slack to AirTable\n" + "2. Schedule fetching task";
@@ -193,32 +200,31 @@ public class Main {
 	public static void createChannel() throws IOException {
 	    // create channel bang slack API
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	    System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\nEnter channel's name:\n");
+	    System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\n");
+	    System.out.print("Enter channel's name: ");
 	    String channelName;
+
 	    try {
-	        channelName = reader.readLine();
-	        if (channelName.trim().isEmpty()) {
-	            System.out.println("Channel name cannot be empty.");
-	            System.out.println("Press Enter to get back...");
-	            System.in.read();
-	            showMenu();
+	        channelName = reader.readLine().trim();
+
+	        if (channelName.isEmpty() || channelName.length() > 21 || !isValidChannelName(channelName)) {
+	            System.out.println("Invalid channel name! Please enter a valid name.");
+	            createChannel();
 	            return;
 	        }
-	        // Replace whitespace with hyphens
-	        channelName = channelName.replaceAll("\\s", "-");
 
-	        System.out.print("Enter '0' for private channel or '1' for public channel:\n");
+	        System.out.print("Enter '0' for private channel or '1' for public channel: ");
 	        String channelType = reader.readLine();
 	        boolean isPrivate = false;
 
 	        while (!channelType.equals("0") && !channelType.equals("1")) {
-	            System.out.println("Invalid input! Please enter '0' for private channel or '1' for public channel:");
+	            System.out.print("Invalid input! Please enter '0' for private channel or '1' for public channel: ");
 	            channelType = reader.readLine();
 	        }
 
 	        isPrivate = channelType.equals("0");
 
-	        System.out.print("Enter channel' description (optional):\n");
+	        System.out.print("Enter channel' description (optional): ");
 	        String description = reader.readLine();
 	        CreateChannels.createChannel(channelName, description, isPrivate);
 	    } catch (IOException e) {
@@ -228,6 +234,12 @@ public class Main {
 	    System.out.println("Press Enter key to get back...");
 	    System.in.read();
 	    showMenu();
+	}
+
+	public static boolean isValidChannelName(String name) {
+	    // Regex pattern to check if the name contains only lowercase letters, non-Latin characters, numbers, and hyphens.
+	    String regex = "^[a-z0-9\\p{L} -]+$";
+	    return name.matches(regex);
 	}
 
 
