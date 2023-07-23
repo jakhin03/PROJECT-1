@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.project.airtableapi.AirTableAPI;
 import com.project.slackdatafetching.SlackDataFetching;
@@ -124,18 +126,37 @@ public class Main {
 	    @SuppressWarnings("resource")
 	    Scanner scanner = new Scanner(System.in);
 
-	    System.out.print("Enter hour (0-23): ");
-	    int hour = scanner.nextInt();
-	    if (hour > 23 || hour < 0) {
-	    	System.out.println("Invalid value for hour!");
-	    	taskScheduling("Schedule sync");
+	    int hour;
+	    int minute;
+	    
+	    while (true) {
+	        System.out.print("Enter hour (0-23): ");
+	        if (scanner.hasNextInt()) {
+	            hour = scanner.nextInt();
+	            if (hour >= 0 && hour <= 23) {
+	                break;
+	            } else {
+	                System.out.println("Invalid value for hour! Please enter a value between 0 and 23.");
+	            }
+	        } else {
+	            System.out.println("Invalid input! Please enter a valid integer for the hour.");
+	            scanner.next(); // Consume the incorrect input
+	        }
 	    }
 
-	    System.out.print("Enter minute (0-59): ");
-	    int minute = scanner.nextInt();
-	    if (minute > 59 || minute < 0) {
-	    	System.out.println("Invalid value for minute!");
-	    	taskScheduling("Schedule sync");
+	    while (true) {
+	        System.out.print("Enter minute (0-59): ");
+	        if (scanner.hasNextInt()) {
+	            minute = scanner.nextInt();
+	            if (minute >= 0 && minute <= 59) {
+	                break;
+	            } else {
+	                System.out.println("Invalid value for minute! Please enter a value between 0 and 59.");
+	            }
+	        } else {
+	            System.out.println("Invalid input! Please enter a valid integer for the minute.");
+	            scanner.next(); // Consume the incorrect input
+	        }
 	    }
 	    
 	    final LocalDateTime submittedScheduleTime = LocalDateTime.now();
@@ -143,7 +164,6 @@ public class Main {
 	    System.out.printf("Data will be syncing at %d:%02d\n", hour, minute);
 
 	    
-
 	    scheduler.scheduleAtFixedRate(new Runnable() {
 	        @Override
 	        public void run() {
@@ -164,24 +184,26 @@ public class Main {
 	}
 		
 	
-	public static void autoFetching(final LocalDateTime submittedTime, final String task){
-		Thread thread = new Thread(new Runnable() {
-             @Override
-             public void run() {
-            	LocalDateTime startedTime = LocalDateTime.now();
-            	String status = "SUCCESS";
-            	 try {
-            		SlackDataFetching.airtableFetching();
-         		}catch (IOException e) {
-         			status = "FAILED";
-         			System.out.println("Network Error!");
-         		}
-       			LocalDateTime finishedTime = LocalDateTime.now();
-       			AirTableAPI.createLogs(submittedTime, startedTime, finishedTime, status, task);
-             }
-         });
-         thread.start();
-	}
+	    public static void autoFetching(final LocalDateTime submittedTime, final String task) {
+	        Thread thread = new Thread(new Runnable() {
+	            @Override
+	            public void run() {
+	                LocalDateTime startedTime = LocalDateTime.now();
+	                String status = "SUCCESS";
+	                try {
+	                    SlackDataFetching.airtableFetching();
+	                } catch (Exception e) {
+	                    status = "FAILED";
+	                    Logger logger = LoggerFactory.getLogger(SlackDataFetching.class);
+	                    logger.error("Error occurred during data fetching: " + e.getMessage());
+	                }
+	                LocalDateTime finishedTime = LocalDateTime.now();
+	                AirTableAPI.createLogs(submittedTime, startedTime, finishedTime, status, task);
+	            }
+	        });
+	        thread.setName("DataFetchingThread-" + task);
+	        thread.start();
+	    }
 
 	public static void showUsers() throws IOException {
 		SlackDataFetching.printUsers();
