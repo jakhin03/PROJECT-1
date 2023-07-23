@@ -41,6 +41,9 @@ public class SlackDataFetching {
         
         // get list channels from Slack
         List<Conversation> slackChannels = fetchChannels(methods);
+        if (slackChannels == null) {
+        	throw new IOException("Failed to fetch channels from Slack.");
+        }
         JSONArray slackChannelArray = convertToJSONArray(extractChannelData(slackChannels));
 
         // get list users from Slack
