@@ -1,4 +1,4 @@
-package com.project.slackmanagement;
+ package com.project.slackmanagement;
 
 import com.project.secrets.Secrets;
 import com.slack.api.Slack;
