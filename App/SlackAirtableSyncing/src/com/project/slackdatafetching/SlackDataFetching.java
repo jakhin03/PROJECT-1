@@ -22,6 +22,8 @@ import com.slack.api.model.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -160,6 +162,10 @@ public class SlackDataFetching {
     }
 
     public static List<Conversation> fetchChannels(MethodsClient methods) {
+    	if (!isNetworkAvailable()) {
+            System.out.println("Error: No network connection or the Slack API host is not reachable.");
+            return null;
+        }
         try {
             ConversationsListRequest request = ConversationsListRequest.builder().token(slackToken)
                     .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL)).build();
@@ -176,6 +182,10 @@ public class SlackDataFetching {
     }
 
     public static List<User> fetchUsers(MethodsClient methods) {
+    	if (!isNetworkAvailable()) {
+            System.out.println("Error: No network connection or the Slack API host is not reachable.");
+            return null;
+        }
         try {
             UsersListRequest request = UsersListRequest.builder()
                     .token(slackToken)
@@ -201,6 +211,10 @@ public class SlackDataFetching {
     }
 
     public static JSONObject fetchChannelsWithUsers(Slack slack, List<Conversation> channels) {
+    	if (!isNetworkAvailable()) {
+            System.out.println("Error: No network connection or the Slack API host is not reachable.");
+            return null;
+        }
         JSONObject channelUsersObject = new JSONObject();
         try {
             for (Conversation channel : channels) {
@@ -260,7 +274,6 @@ public class SlackDataFetching {
         }
         return userDataList;
     }
-
 
     public static void printChannelsWithUsers() {
         Slack slack = Slack.getInstance();
@@ -326,6 +339,15 @@ public class SlackDataFetching {
     private static String convertToString(Object object) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(object);
+    }
+
+    private static boolean isNetworkAvailable() {
+        try {
+            InetAddress.getByName("slack.com");
+            return true;
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 
 }
