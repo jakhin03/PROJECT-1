@@ -57,7 +57,7 @@
 ```
 * Airtable database:
 	* Create table Channels:
-		* Fields: name, id, topic, description, creator, createDaate, privacy, status, is_deleted
+		* Fields: name, id, topic, description, creator, createDaate, privacy, status, is_deleted, Users (linked to Users table)
 	* Create table Users:
 		* Fields: name, id, displayName, fullName, email, status, role, userCreateDate, statusChangeDate, is_deleted
   	* Create table Logs:
