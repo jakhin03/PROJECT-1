@@ -11,7 +11,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.project.airtableapi.AirTableAPI;
 import com.project.slackdatafetching.SlackDataFetching;
 import com.project.slackmanagement.CreateChannels;
@@ -23,7 +22,6 @@ public class Main {
 	private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
 	public static void main(String[] args) throws Exception {
-		//autoFetching();
 		showlogo();
 		showMenu();
 		sc.close();
@@ -246,7 +244,7 @@ public class Main {
 
 	        isPrivate = channelType.equals("0");
 
-	        System.out.print("Enter channel' description (optional): ");
+	        System.out.print("Enter channel's description (optional): ");
 	        String description = reader.readLine();
 	        CreateChannels.createChannel(channelName, description, isPrivate);
 	    } catch (IOException e) {
