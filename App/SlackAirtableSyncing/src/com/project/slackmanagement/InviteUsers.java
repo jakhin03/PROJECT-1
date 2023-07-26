@@ -60,10 +60,10 @@ public class InviteUsers {
             // Read the list of user e-mails
             System.out.print("Enter the list of user emails (comma-separated): ");
             String userEmailsInput = reader.readLine();
-            String[] userEmailsArray = userEmailsInput.split(",");
+            String[] userEmailsArray = userEmailsInput.split("\\s*,\\s*");
             for (String userEmail : userEmailsArray) {
             	if (!isValidEmail(userEmail)) {
-            		System.out.println("Invalid email! Please enter valid emails.");
+            		System.out.println(userEmail+ " is an invalid email! Please enter valid emails.");
             		continue;
             	} else {
             		userEmails.add(userEmail.trim());
