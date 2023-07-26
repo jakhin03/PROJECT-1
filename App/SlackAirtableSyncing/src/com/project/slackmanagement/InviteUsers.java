@@ -1,6 +1,7 @@
  package com.project.slackmanagement;
 
 import com.project.secrets.Secrets;
+import com.project.main.*;
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.conversations.ConversationsInviteRequest;
@@ -19,14 +20,24 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InviteUsers {
 
     private static final String BOT_TOKEN = Secrets.getSlackBotToken();
-   
 
     private InviteUsers() {
         throw new IllegalStateException("Utility class");
+    }
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+
+    public static boolean isValidEmail(String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     public static void inviteUser() throws IOException {
@@ -38,14 +49,29 @@ public class InviteUsers {
         try {
             // Read the channel name
             System.out.print("Enter the channel name: ");
-            channelName = reader.readLine();
+            channelName = reader.readLine().trim();
+
+	        if (channelName.isEmpty() || channelName.length() > 21 || !Main.isValidChannelName(channelName)) {
+	            System.out.println("Invalid channel name! Please enter a valid name.");
+	            inviteUser();
+	            return;
+	        }
 
             // Read the list of user e-mails
             System.out.print("Enter the list of user emails (comma-separated): ");
             String userEmailsInput = reader.readLine();
             String[] userEmailsArray = userEmailsInput.split(",");
             for (String userEmail : userEmailsArray) {
-                userEmails.add(userEmail.trim());
+            	if (!isValidEmail(userEmail)) {
+            		System.out.println("Invalid email! Please enter valid emails.");
+            		continue;
+            	} else {
+            		userEmails.add(userEmail.trim());
+            	}
+            } 
+            // Check if list of e-mails is empty
+            if (userEmails.isEmpty()) {
+            	return;
             }
 
         } catch (NumberFormatException e) {
