@@ -37,7 +37,7 @@ public class CreateChannels {
                                 .build()
                 );
 
-                System.out.println("Channel purpose set successfully.");
+                System.out.println("Channel's description set successfully.");
             } else {
                 System.out.println("Failed to create channel. Error: " + createResponse.getError());
             }
