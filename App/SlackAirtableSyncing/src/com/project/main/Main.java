@@ -15,6 +15,7 @@ import com.project.airtableapi.AirTableAPI;
 import com.project.slackdatafetching.SlackDataFetching;
 import com.project.slackmanagement.CreateChannels;
 import com.project.slackmanagement.InviteUsers;
+import com.slack.api.methods.SlackApiException;
 
 public class Main {
 
@@ -47,7 +48,7 @@ public class Main {
 		System.out.println(line);
 	}
 
-	public static void showMenu() throws IOException {
+	public static void showMenu() throws IOException, SlackApiException {
 	    String menu = "\nPlease select an option:\n\n" + "1. Show Slack's channels\n"
 	            + "2. Show Slack user's information\n" + "3. Create a channels\n"
 	            + "4. Invite user to channel\n" + "5. Fetching slack to airtable\n"
@@ -89,7 +90,7 @@ public class Main {
 	}
 
 
-	public static void showMenuFetching() throws IOException{
+	public static void showMenuFetching() throws IOException, SlackApiException{
 		String menu = "\nPlease select an option:\n\n" + "1. Fetch data from Slack to AirTable\n" + "2. Schedule fetching task";
 		System.out.println(menu);
 		int option = sc.nextInt();
@@ -203,21 +204,21 @@ public class Main {
 	        thread.start();
 	    }
 
-	public static void showUsers() throws IOException {
+	public static void showUsers() throws IOException, SlackApiException {
 		SlackDataFetching.printUsers();
 		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
 
-	public static void showChannels() throws IOException  {
+	public static void showChannels() throws IOException, SlackApiException  {
 		SlackDataFetching.printChannels();
 		System.out.println("Press Enter key to get back...");
 		System.in.read();
 		showMenu();
 	}
 
-	public static void createChannel() throws IOException {
+	public static void createChannel() throws IOException, SlackApiException {
 	    // create channel bang slack API
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	    System.out.print("Note: Channel names have a 21-character limit and can include lowercase letters, non-Latin characters, numbers, and hyphens.\n");
@@ -263,11 +264,11 @@ public class Main {
 	}
 
 
-	public static void inviteUser() throws IOException{
+	public static void inviteUser() throws IOException, SlackApiException{
 		try {
 			InviteUsers.inviteUser();
 		}catch (IOException e) {
-			System.out.println("Cant invtie user!");
+			System.out.println("Cant invite user!");
 		}
 		
 		System.out.println("Press Enter key to get back...");

@@ -71,8 +71,9 @@ public class AirTableAPI {
             isDeleted = false;
         }
         if (isDeleted) {
-        	JSONObject deletedSlackRecordrObject = existingRecordObject.put("isDeleted", "1");
+        	JSONObject deletedSlackRecordrObject = existingRecordObject.put("is_deleted", "1");
         	updateRecord(airtableTableID, airtableRecordId, deletedSlackRecordrObject);
+        
         }
 	}
 	

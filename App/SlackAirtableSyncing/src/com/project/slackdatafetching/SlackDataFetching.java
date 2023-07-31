@@ -20,6 +20,7 @@ import com.slack.api.model.Conversation;
 import com.slack.api.model.ConversationType;
 import com.slack.api.model.User;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,7 +28,10 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SlackDataFetching {
 
@@ -36,13 +40,14 @@ public class SlackDataFetching {
 	}
 	// Slack API credentials
 	static String slackToken = Secrets.getSlackBotToken();
+	static String userToken = Secrets.getSlackUserToken();
 
     public static void airtableFetching() throws IOException {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
         
         // get list channels from Slack
-        List<Conversation> slackChannels = fetchChannels(methods);
+        List<Conversation> slackChannels = fetchAllChannels(slack, methods);
         if (slackChannels == null) {
         	throw new IOException("Failed to fetch channels from Slack.");
         }
@@ -100,7 +105,7 @@ public class SlackDataFetching {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
 
-        List<Conversation> channels = fetchChannels(methods);
+        List<Conversation> channels = fetchAllChannels(slack, methods);
         if (channels != null) {
             String channelsString = convertToString(extractChannelData(channels));
             JSONArray channelsJSON = new JSONArray(channelsString);
@@ -161,28 +166,74 @@ public class SlackDataFetching {
         }
     }
 
-    public static List<Conversation> fetchChannels(MethodsClient methods) {
-    	if (!isNetworkAvailable()) {
+    public static List<Conversation> fetchChannels(MethodsClient methods, String token) {
+        if (!isNetworkAvailable()) {
             System.out.println("Error: No network connection or the Slack API host is not reachable.");
             return null;
         }
         try {
-            ConversationsListRequest request = ConversationsListRequest.builder().token(slackToken)
-                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL)).build();
+            ConversationsListRequest request = ConversationsListRequest.builder()
+                    .token(token)
+                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL))
+                    .build();
             ConversationsListResponse response = methods.conversationsList(request);
             if (response.isOk()) {
-                return response.getChannels();
+                // Filter out and remove duplicate channels based on their IDs
+                List<Conversation> channels = response.getChannels();
+                if (channels != null) {
+                    Set<String> channelIds = new HashSet<>();
+                    List<Conversation> uniqueChannels = new ArrayList<>();
+
+                    for (Conversation channel : channels) {
+                        if (!channelIds.contains(channel.getId())) {
+                            channelIds.add(channel.getId());
+                            uniqueChannels.add(channel);
+                        }
+                    }
+
+                    return uniqueChannels;
+                } else {
+                    System.out.println("Failed to fetch channels: The 'channels' list is null.");
+                }
             } else {
                 System.out.println("Failed to fetch channels: " + response.getError());
             }
         } catch (IOException | SlackApiException e) {
             System.out.println("Error occurred while fetching channels: " + e.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
+
+    
+    public static List<Conversation> fetchAllChannels(Slack slack, MethodsClient methods) {
+        List<Conversation> slackChannels = new ArrayList<>();
+
+        // Fetch user's channels using user token
+        List<Conversation> userChannels = fetchChannels(methods, userToken);
+
+        // Fetch bot's channels using bot token
+        List<Conversation> botChannels = fetchChannels(methods, slackToken);
+
+        // Merge the results and remove duplicates
+        Set<String> channelIds = new HashSet<>();
+        for (Conversation channel : userChannels) {
+            if (channelIds.add(channel.getId())) {
+                slackChannels.add(channel);
+            }
+        }
+        for (Conversation channel : botChannels) {
+            if (channelIds.add(channel.getId())) {
+                slackChannels.add(channel);
+            }
+        }
+
+        return slackChannels;
+    }
+
+
     public static List<User> fetchUsers(MethodsClient methods) {
-    	if (!isNetworkAvailable()) {
+        if (!isNetworkAvailable()) {
             System.out.println("Error: No network connection or the Slack API host is not reachable.");
             return null;
         }
@@ -193,42 +244,45 @@ public class SlackDataFetching {
             UsersListResponse response = methods.usersList(request);
             if (response.isOk()) {
                 List<User> users = response.getMembers();
-                // Filter out bot users
-                List<User> filteredUsers = new ArrayList<>();
-                for (User user : users) {
-                    if (!user.isBot()) {
-                        filteredUsers.add(user);
+                if (users != null) {
+                    // Filter out bot users
+                    List<User> filteredUsers = new ArrayList<>();
+                    for (User user : users) {
+                        if (!user.isBot()) {
+                            filteredUsers.add(user);
+                        }
                     }
+                    return filteredUsers;
+                } else {
+                    System.out.println("Failed to fetch users: The 'users' list is null.");
                 }
-                return filteredUsers;
             } else {
                 System.out.println("Failed to fetch users: " + response.getError());
             }
         } catch (IOException | SlackApiException e) {
             System.out.println("Error occurred while fetching users: " + e.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
+
     public static JSONObject fetchChannelsWithUsers(Slack slack, List<Conversation> channels) {
-    	if (!isNetworkAvailable()) {
-            System.out.println("Error: No network connection or the Slack API host is not reachable.");
-            return null;
-        }
         JSONObject channelUsersObject = new JSONObject();
         try {
             for (Conversation channel : channels) {
                 String channelId = channel.getId();
                 String channelName = channel.getName();
-                ConversationsMembersResponse membersResponse = slack.methods(slackToken)
-                        .conversationsMembers(ConversationsMembersRequest.builder().channel(channelId).build());
 
-                if (membersResponse.isOk()) {
-                    List<String> memberIds = membersResponse.getMembers();
-                    channelUsersObject.put(channelName, memberIds);
-                } else {
-                    System.out.println("Failed to fetch members for channel " + channelName + ". Error: "
-                            + membersResponse.getError());
+                // Fetch members using bot token
+                List<String> botTokenMemberIds = fetchChannelMembers(slack, slackToken, channelId);
+                if (botTokenMemberIds != null) {
+                    channelUsersObject.put(channelName, botTokenMemberIds);
+                }
+
+                // Fetch members using user token
+                List<String> userTokenMemberIds = fetchChannelMembers(slack, userToken, channelId);
+                if (userTokenMemberIds != null) {
+                    channelUsersObject.put(channelName, userTokenMemberIds);
                 }
             }
         } catch (IOException | SlackApiException e) {
@@ -236,6 +290,24 @@ public class SlackDataFetching {
         }
         return channelUsersObject;
     }
+
+
+
+    private static List<String> fetchChannelMembers(Slack slack, String token, String channelId) throws IOException, SlackApiException {
+        ConversationsMembersRequest request = ConversationsMembersRequest.builder()
+                .token(token)
+                .channel(channelId)
+                .build();
+
+        ConversationsMembersResponse response = slack.methods().conversationsMembers(request);
+
+        if (response.isOk()) {
+            return response.getMembers();
+        } else {
+            return Collections.emptyList(); // Return an empty list in case of failure
+        }
+    }
+
 
     public static List<ChannelData> extractChannelData(List<Conversation> channels) {
         List<ChannelData> channelDataList = new ArrayList<>();
@@ -278,7 +350,7 @@ public class SlackDataFetching {
     public static void printChannelsWithUsers() {
         Slack slack = Slack.getInstance();
         MethodsClient methods = slack.methods();
-        List<Conversation> channels = fetchChannels(methods);
+        List<Conversation> channels = fetchAllChannels(slack, methods);
 
         if (channels != null) {
             JSONObject channelUsersObject = fetchChannelsWithUsers(slack, channels);
