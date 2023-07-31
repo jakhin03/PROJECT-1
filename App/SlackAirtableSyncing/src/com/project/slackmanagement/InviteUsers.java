@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 public class InviteUsers {
 
     private static final String BOT_TOKEN = Secrets.getSlackBotToken();
+    private static final String USER_TOKEN = Secrets.getSlackUserToken();
 
     private InviteUsers() {
         throw new IllegalStateException("Utility class");
@@ -40,7 +41,7 @@ public class InviteUsers {
         return matcher.matches();
     }
 
-    public static void inviteUser() throws IOException {
+    public static void inviteUser() throws IOException, SlackApiException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         String channelName = null;
@@ -60,10 +61,10 @@ public class InviteUsers {
             // Read the list of user e-mails
             System.out.print("Enter the list of user emails (comma-separated): ");
             String userEmailsInput = reader.readLine();
-            String[] userEmailsArray = userEmailsInput.split(",");
+            String[] userEmailsArray = userEmailsInput.split("\\s*,\\s*");
             for (String userEmail : userEmailsArray) {
             	if (!isValidEmail(userEmail)) {
-            		System.out.println("Invalid email! Please enter valid emails.");
+            		System.out.println(userEmail+ " is an invalid email! Please enter valid emails.");
             		continue;
             	} else {
             		userEmails.add(userEmail.trim());
@@ -82,7 +83,7 @@ public class InviteUsers {
         Slack slack = Slack.getInstance();
 
         // Find channel by name
-        String channelId = getChannelId(channelName, slack);
+        String channelId = getChannelId(channelName, slack, BOT_TOKEN, USER_TOKEN);
 
         if (channelId == null) {
             System.out.println("Channel with name '" + channelName + "' not found.");
@@ -97,43 +98,100 @@ public class InviteUsers {
             return;
         }
 
-        // Invite users to the channel
-        ConversationsInviteRequest inviteRequest = ConversationsInviteRequest.builder()
-                .token(BOT_TOKEN)
-                .channel(channelId)
-                .users(userIds)
-                .build();
 
-        try {
-            ConversationsInviteResponse inviteResponse = slack.methods(BOT_TOKEN).conversationsInvite(inviteRequest);
-            if (inviteResponse.isOk()) {
-                System.out.println("Users invited successfully to the channel.");
-            } else {
-                System.out.println("Failed to invite users to the channel. Error: " + inviteResponse.getError());
+        boolean userInviteSuccess = inviteUsersWithUserToken(slack, channelId, userIds);
+        if (!userInviteSuccess) {
+            boolean botInviteSuccess = inviteUsersWithBotToken(slack, channelId, userIds);
+            if (!botInviteSuccess) {
+                System.out.println("Failed to invite users to the channel using both user and bot tokens.");
             }
-        } catch (IOException | SlackApiException e) {
-            System.out.println("Failed to invite users to the channel. Error: " + e.getMessage());
         }
     }
 
-    private static String getChannelId(String channelName, Slack slack) {
+    private static boolean inviteUsersWithUserToken(Slack slack, String channelId, List<String> userIds) throws SlackApiException {
         try {
-            ConversationsListRequest request = ConversationsListRequest.builder()
-                    .excludeArchived(true)
-                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL))
+            ConversationsInviteRequest userTokenInviteRequest = ConversationsInviteRequest.builder()
+                    .token(USER_TOKEN)
+                    .channel(channelId)
+                    .users(userIds)
                     .build();
 
-            ConversationsListResponse response = slack.methods(BOT_TOKEN).conversationsList(request);
+            ConversationsInviteResponse inviteResponse = slack.methods(USER_TOKEN).conversationsInvite(userTokenInviteRequest);
 
-            if (response.isOk()) {
-                List<Conversation> channels = response.getChannels();
+            if (inviteResponse.isOk()) {
+                System.out.println("Users invited successfully to the channel using the user token.");
+                return true;
+            } else {
+                System.out.println("Failed to invite users to the channel using the user token. Error: " + inviteResponse.getError());
+            }
+        } catch (IOException e) {
+            System.out.println("Error occurred while inviting users to the channel using the user token: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private static boolean inviteUsersWithBotToken(Slack slack, String channelId, List<String> userIds) throws SlackApiException {
+        try {
+            ConversationsInviteRequest botTokenInviteRequest = ConversationsInviteRequest.builder()
+                    .token(BOT_TOKEN)
+                    .channel(channelId)
+                    .users(userIds)
+                    .build();
+
+            ConversationsInviteResponse inviteResponse = slack.methods(BOT_TOKEN).conversationsInvite(botTokenInviteRequest);
+
+            if (inviteResponse.isOk()) {
+                System.out.println("Users invited successfully to the channel using the bot token.");
+                return true;
+            } else {
+                System.out.println("Failed to invite users to the channel using the bot token. Error: " + inviteResponse.getError());
+            }
+        } catch (IOException e) {
+            System.out.println("Error occurred while inviting users to the channel using the bot token: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private static String getChannelId(String channelName, Slack slack, String botToken, String userToken) {
+        try {
+            // First, try to fetch channels using bot token
+            ConversationsListRequest botTokenRequest = ConversationsListRequest.builder()
+                    .excludeArchived(true)
+                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL))
+                    .token(botToken)
+                    .build();
+
+            ConversationsListResponse botTokenResponse = slack.methods(botToken).conversationsList(botTokenRequest);
+
+            if (botTokenResponse.isOk()) {
+                List<Conversation> channels = botTokenResponse.getChannels();
                 for (Conversation channel : channels) {
                     if (channel.getName().equals(channelName)) {
                         return channel.getId();
                     }
                 }
             } else {
-                System.out.println("Failed to fetch conversations: " + response.getError());
+                System.out.println("Error occurred while fetching channels using bot token: " + botTokenResponse.getError());
+            }
+
+            // If not found using the bot token, try to fetch using the user token
+            ConversationsListRequest userTokenRequest = ConversationsListRequest.builder()
+                    .excludeArchived(true)
+                    .types(Arrays.asList(ConversationType.PUBLIC_CHANNEL, ConversationType.PRIVATE_CHANNEL))
+                    .token(userToken)
+                    .build();
+
+            ConversationsListResponse userTokenResponse = slack.methods(userToken).conversationsList(userTokenRequest);
+
+            if (userTokenResponse.isOk()) {
+                List<Conversation> channels = userTokenResponse.getChannels();
+                for (Conversation channel : channels) {
+                    if (channel.getName().equals(channelName)) {
+                        return channel.getId();
+                    }
+                }
+            } else {
+                System.out.println("Error occurred while fetching channels using user token: " + userTokenResponse.getError());
             }
         } catch (IOException | SlackApiException e) {
             System.out.println("Error occurred while fetching conversations: " + e.getMessage());
@@ -141,6 +199,8 @@ public class InviteUsers {
 
         return null;
     }
+
+
 
 
     private static List<String> getUserIdsByEmails(List<String> userEmails, Slack slack) {
@@ -165,4 +225,5 @@ public class InviteUsers {
         return userIds;
 
     }
+
 }

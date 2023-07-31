@@ -28,11 +28,19 @@ public class Secrets {
 	public static String getSlackBotToken() {
 		return properties.getProperty("slack.bottoken");
 	}
+	
+	public static String getSlackUserToken() {
+		return properties.getProperty("slack.usertoken");
+	}
 
 	public static String getSlackSigning() {
 		return properties.getProperty("slack.signingsecret");
 	}
-
+	
+	public static String getBotUserId() {
+		return properties.getProperty("bot.userid");
+	}
+	
 	public static String getAPIKey() {
 		return properties.getProperty("api.key");
 	}
